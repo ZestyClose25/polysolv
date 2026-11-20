@@ -1,0 +1,81 @@
+# CLAUDE.md — Polysolv
+
+## Working rules (read first, always follow)
+I am a student building this project **myself** to learn. You are my tutor and reviewer, not the author.
+
+1. **Do not create or edit files unless I explicitly say "write it", "edit it" or "generate it".**
+2. When I ask how to do something: explain the approach, point to the right APIs, give hints or small snippets (≤ 10 lines). Let me write the full code.
+3. When I ask for a review: list bugs, chemistry mistakes and ML mistakes with line references. **Do not fix them** unless I ask.
+4. When I paste an error: explain *why* it happens and what to check. Don't just hand me the fix.
+5. Files marked **[C]** in the build plan (tests, plots, notebooks for figures, configs, logging, `baselines/xgb_baseline.py`, `scripts/build_dataset.py`) you may write when I ask.
+6. Files marked **[U]** (all core logic: data cleaning, featurization, physics, model, losses, training loop, mass balance, screening) — hints and reviews only.
+7. Before suggesting a design change, check it against "Decisions" below and tell me if it contradicts one.
+8. Keep answers short and concrete. Ask me before running long jobs (training, large installs).
+9. When I finish a task, remind me to tick it in `docs/build_plan.md` and update the progress log there.
+
+## Project in one paragraph
+Polysolv is a Chemistry-department exploratory project (theme: AI in recycling). It recommends a **green solvent** that selectively dissolves **polystyrene (PS)** from a **PS/PET** mixture while PET stays solid. For each candidate solvent it outputs a temperature window, saturation solubility, recommended loading / solvent-to-waste ratio, predicted PS purity and a confidence level. The model is a **physics-informed two-tower GNN**: it predicts the Flory–Huggins parameter χ(T) = A + B/T (as a correction to a Hansen-parameter prior) and derives solubility from χ.
+
+## Decisions (do not change without discussing)
+- **Data**
+  - Zhou et al., *Green Chem.* 2023 (DOI 10.1039/D3GC00404J): COSMO-RS wt% for 8 polymers (EVOH, PE, PP, PS, PET, PVC, nylon 6, nylon 66) × 1007 solvents × 2 temperatures (RT and Th = min(bp − 1, 120) °C). `M` = fully miscible (treat as censored at a cap), `NaN` = solvent boils below RT (drop). Regression target: `log10(wt% + 1e-3)`.
+  - Kern et al., *PCCP* 2022 (DOI 10.1039/D2CP03735A): 3,373 polymers × 51 solvents, ~20.7k soluble/insoluble pairs at room temperature. Classification target.
+  - `data/external/polymer_props.csv` (hand-built, with sources) and `data/external/green_solvents.csv` (CHEM21/GSK categories, screening filter only).
+  - No COSMO-RS/AMS license needed; we never generate new COSMO labels.
+- **Featurization**: RDKit SMILES → PyTorch Geometric graphs. Polymers as repeat units with `*` as a dummy atom type (PS `*CC(*)c1ccccc1`, PET `*OCCOC(=O)c1ccc(cc1)C(=O)*`). Implicit hydrogens, bidirectional edges, cache graphs by canonical SMILES. No hand-made fingerprints for the GNN; Morgan fingerprints only for the XGBoost baseline.
+- **Model**
+  - Two separate GIN towers (4 × GINEConv, hidden 128, BatchNorm, ReLU, dropout 0.1, sum pooling) + descriptor MLPs → h_p, h_s.
+  - Interaction vector `[h_p, h_s, h_p⊙h_s, |h_p − h_s|, Ra², mask]` → MLP → ΔA, ΔB.
+  - `A = 0.34 + ΔA`, `B = B_HSP·mask + ΔB`, `B_HSP = V_s·Ra²/(4R)`, `Ra² = 4ΔδD² + ΔδP² + ΔδH²` (V in cm³/mol, δ in MPa^½, R = 8.314 J/mol/K).
+  - `χ(T) = A + B/T` — temperature enters only here.
+  - Head 1 (Zhou): `log10 wt% = c0 − softplus(c1)·χ + c2·crystallinity_term`.
+  - Head 2 (Kern): `p = sigmoid(softplus(k)·(0.5 − χ))`.
+  - Uncertainty: 5-seed deep ensemble.
+- **Loss**: `λ1·censored MSE + λ2·BCE + λ3·pairwise rank (PS > PET, optional) + λ4·physics_reg`.
+- **Training**: Stage 1 pretrain on Zhou → Stage 2 fine-tune on Kern + 20% Zhou replay → Stage 3 (optional) selectivity rank loss.
+- **Splits**: Zhou = Bemis–Murcko solvent-scaffold split 80/10/10 (no solvent in both train and test). Kern = polymer split.
+- **Baselines**: Hansen RED ranking; XGBoost on Morgan FP (polymer trimer trick) + descriptors; plain two-tower GIN without the physics layer.
+- **Concentration**: the model predicts saturation S_PS and S_PET only. The waste PS:PET ratio is an input to screening, not to the model. Mass balance in `mass_balance.py`:
+  `c = min(0.8·S_PS_lower, c_max)`, `m_solv = m·f_PS·(100 − c)/c`, `m_PET = S_PET_upper/(100 − S_PET_upper)·m_solv`, `purity = m·f_PS/(m·f_PS + m_PET)`.
+- **Screening**: T grid 25 °C → bp − 10 °C, step 5. Keep if PS_lower ≥ 10 wt%, PET_upper ≤ 0.5 wt%, T < bp, greenness OK. `score = PS_lower − PET_upper + w·greenness`.
+- Dissolution time is optional and physics-estimated only (not learned).
+
+## Repo layout
+```
+configs/default.yaml               all hyperparameters, paths, seeds
+data/raw/                          original downloads — never modify
+data/external/                     hand-built CSVs (polymer_props, green_solvents)
+data/processed/                    generated by scripts/build_dataset.py (git-ignored)
+src/polysolv/data/                 load_zhou, load_kern, clean, merge, splits
+src/polysolv/features/             graph (SMILES→PyG), descriptors, physics (Ra², B_HSP)
+src/polysolv/dataset.py            PyG dataset + collate
+src/polysolv/model/                towers, interaction, flory_huggins, heads, polysolv_net
+src/polysolv/losses.py, train.py, ensemble.py, evaluate.py, mass_balance.py, screen.py
+baselines/                         hsp_ranking.py, xgb_baseline.py
+scripts/                           build_dataset.py, run_training.py, run_screening.py
+notebooks/                         exploration + report figures only
+tests/                             pytest
+docs/                              build_plan.md (task list + progress log), architecture.md
+```
+
+## Conventions
+- Python 3.11, type hints, docstrings on public functions, `pathlib` for paths.
+- All tunable values live in `configs/default.yaml`; no magic numbers in code.
+- Temperatures in **kelvin** inside code; °C only in user-facing output.
+- Fixed seeds everywhere; log seed with every result.
+- Tests with `pytest`; run `pytest -q` before every commit.
+- Notebooks never contain logic that the pipeline depends on.
+
+## Commands
+```bash
+source .venv/bin/activate
+python scripts/build_dataset.py                       # raw → processed
+python scripts/run_training.py --config configs/default.yaml
+python scripts/run_screening.py --target PS --other PET --waste-mass 100 --ps-fraction 0.3
+pytest -q
+```
+
+## Task plan and current status
+The full task list (T1–T36) with done-criteria and the progress log is in `docs/build_plan.md`. Always check the progress log there for the current task before answering "what next".
+
+@docs/build_plan.md

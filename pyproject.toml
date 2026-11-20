@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "polysolv"
+version = "0.1.0"
+description = "Physics-informed two-tower GNN for green-solvent selection in PS/PET dissolution recycling"
+# readme = "README.md"   # uncomment once README.md exists (T2)
+requires-python = ">=3.11"
+dependencies = [
+    "rdkit>=2024.3",
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "openpyxl>=3.1",
+]
+
+[project.optional-dependencies]
+# Added later at T12 (torch, torch_geometric) and T16 (xgboost).
+dev = [
+    "pytest>=8.0",
+    "jupyter>=1.0",
+]
+
+# Flat layout: `src/` itself is the package -> imports look like `from src.data.clean import ...`
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src", "src.*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"

@@ -1,0 +1,11 @@
+1. IEEE paper - A New Model for Learning in Graph Domains
+https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1555942
+
+2. DeepFindr playlist
+https://www.youtube.com/playlist?list=PLV8yxwGOxvvoNkzPfCx2i8an--Tkt7O8Z
+
+3. Introduction to Graph Neural Networks for Machine Learning Engineers
+https://www.youtube.com/playlist?list=PLV8yxwGOxvvoNkzPfCx2i8an--Tkt7O8Z
+
+4. Sample Colab notebook
+https://colab.research.google.com/drive/16GBgwYR2ECiXVxA1BoLxYshKczNMeEAQ?usp=sharing

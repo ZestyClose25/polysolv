@@ -1,0 +1,37 @@
+# --- Environments ---
+.venv/
+venv/
+env/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Data (not committed for now; decide later about data/raw) ---
+# data/external/ (hand-built CSVs) IS committed.
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# --- Training / run outputs ---
+checkpoints/
+runs/
+outputs/
+logs/
+*.pt
+*.ckpt
+*.pkl
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
