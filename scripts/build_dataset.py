@@ -4,7 +4,7 @@ Usage (from repo root):
     python -m scripts.build_dataset [--config configs/default.yaml]
 
 Writes: solvents.csv, polymers.csv, zhou_long.csv, zhou_dropped.csv, splits.json,
-        solvent_descriptors.csv, polymer_descriptors.csv, scalers.json, build.log
+        solvent_descriptors.csv, polymer_descriptors.csv, scalers.json, graphs.pt, build.log
 """
 
 from __future__ import annotations
@@ -20,6 +20,7 @@ from polysolv.data.load_zhou import load_zhou
 from polysolv.data.merge import merge_all
 from polysolv.data.splits import save_splits, scaffold_split
 from polysolv.features.descriptors import add_molar_volume, build_descriptors, save_scalers
+from polysolv.features.graph import GraphCache
 from polysolv.features.physics import add_prior_columns
 
 log = logging.getLogger("build_dataset")
@@ -62,6 +63,9 @@ def main(config_path: str) -> None:
     save_scalers(scalers, out / "scalers.json")
     log.info("descriptors: solvent %s, polymer %s (scaler fitted on %d train solvents)",
              s_desc.shape, p_desc.shape, len(split["train"]))
+    graphs = GraphCache().build(list(tables["solvents"]["can_smiles"]) + list(tables["polymers"]["can_smiles"]))
+    graphs.save(out / "graphs.pt")
+    log.info("graphs: %d cached (solvents + polymer repeat units)", len(graphs))
     log.info("wrote %s", sorted(p.name for p in out.iterdir()))
 
 

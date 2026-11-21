@@ -109,7 +109,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 - [x] **T11 green_solvents.csv** [U] (parallel, any time before T27) — 50–200 green solvents with CAS + CHEM21/GSK category; flag which are already in Zhou.
 
 ### Phase 2 — Features & physics baseline
-- [ ] **T12 graph.py** [U] + tests [C] — `atom_features`, `bond_features`, `smiles_to_graph` → PyG `Data`; `*` as dummy atom; bidirectional edges; SMILES-keyed cache. Install `torch`, `torch_geometric`.
+- [x] **T12 graph.py** [U] + tests [C] — `atom_features`, `bond_features`, `smiles_to_graph` → PyG `Data`; `*` as dummy atom; bidirectional edges; SMILES-keyed cache. Install `torch`, `torch_geometric`.
   *Done when:* PS graph 10 nodes, limonene 10 nodes, all dataset SMILES convert.
 - [x] **T13 descriptors.py** [U] — z-scored solvent (δD, δP, δH, bp, V) & polymer (Tg, Tm, cryst, density + mask) vectors; save scaler.
 - [x] **T14 physics.py** [U] + tests [C] — `ra2()`, `b_hsp()`, `chi_prior()`, `add_prior_columns()` (units: V cm³/mol, δ MPa^½, R = 8.314).
