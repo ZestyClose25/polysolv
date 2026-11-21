@@ -1,0 +1,58 @@
+name,cas,smiles,chem21,greenness,bio_based,in_zhou,zhou_solvent_id,source,verified
+water,7732-18-5,O,recommended,3,0,1,942,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+ethanol,64-17-5,CCO,recommended,3,1,1,493,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+methanol,67-56-1,CO,recommended,3,0,1,654,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+1-propanol,71-23-8,CCCO,recommended,3,0,1,101,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+2-propanol,67-63-0,CC(C)O,recommended,3,0,1,176,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+1-butanol,71-36-3,CCCCO,recommended,3,0,1,67,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+tert-butanol,75-65-0,CC(C)(C)O,recommended,3,0,1,867,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+benzyl alcohol,100-51-6,OCc1ccccc1,recommended,3,0,1,294,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+ethylene glycol,107-21-1,OCCO,recommended,3,0,1,532,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+glycerol,56-81-5,OCC(O)CO,recommended,3,1,1,569,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+acetone,67-64-1,CC(C)=O,recommended,3,0,1,237,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+butanone,78-93-3,CCC(C)=O,recommended,3,0,1,671,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+methyl isobutyl ketone,108-10-1,CC(C)CC(C)=O,recommended,3,0,1,681,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+ethyl acetate,141-78-6,CCOC(C)=O,recommended,3,0,1,495,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+isopropyl acetate,108-21-4,CC(C)OC(C)=O,recommended,3,0,1,629,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+n-butyl acetate,123-86-4,CCCCOC(C)=O,recommended,3,0,1,715,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+anisole,100-66-3,COc1ccccc1,recommended,3,0,1,278,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+dimethyl carbonate,616-38-6,COC(=O)OC,recommended,3,0,1,456,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+propylene carbonate,108-32-7,CC1COC(=O)O1,recommended,3,0,1,825,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+cyclohexanone,108-94-1,O=C1CCCCC1,problematic,2,0,1,369,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+methyl acetate,79-20-9,COC(C)=O,problematic,2,0,1,656,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+tetrahydrofuran,109-99-9,C1CCOC1,problematic,2,0,1,871,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+2-methyltetrahydrofuran,96-47-9,CC1CCCO1,problematic,2,1,1,159,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+cyclopentyl methyl ether,5614-37-9,COC1CCCC1,problematic,2,0,1,379,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+n-heptane,142-82-5,CCCCCCC,problematic,2,0,1,583,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+cyclohexane,110-82-7,C1CCCCC1,problematic,2,0,1,367,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+methylcyclohexane,108-87-2,CC1CCCCC1,problematic,2,0,1,668,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+toluene,108-88-3,Cc1ccccc1,problematic,2,0,1,893,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+p-xylene,106-42-3,Cc1ccc(C)cc1,problematic,2,0,1,943,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+dimethyl sulfoxide,67-68-5,CS(C)=O,problematic,2,0,1,470,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+acetonitrile,75-05-8,CC#N,problematic,2,0,1,239,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+acetic acid,64-19-7,CC(=O)O,problematic,2,0,1,235,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+sulfolane,126-33-0,O=S1(=O)CCCC1,problematic,2,0,1,862,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+d-limonene,5989-27-5,CC1=CCC(CC1)C(C)=C,problematic,2,1,1,472,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+p-cymene,99-87-6,Cc1ccc(cc1)C(C)C,problematic,2,1,0,,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+gamma-valerolactone,108-29-2,CC1CCC(=O)O1,problematic,2,1,1,967,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+Cyrene (dihydrolevoglucosenone),53716-82-8,O=C1CCC2OCC1O2,problematic,2,1,0,,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+ethyl lactate,97-64-3,CCOC(=O)C(C)O,problematic,2,1,1,518,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+diethyl carbonate,105-58-8,CCOC(=O)OCC,problematic,2,0,1,423,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+"1,8-cineole (eucalyptol)",470-82-6,CC12CCC(CC1)C(C)(C)O2,problematic,2,1,1,61,not in CHEM21; category assigned by analogy with terpene solvents,no
+alpha-pinene,80-56-8,CC1=CCC2CC1C2(C)C,problematic,2,1,0,,not in CHEM21; category assigned by analogy with terpene solvents,no
+"N,N-dimethylformamide",68-12-2,CN(C)C=O,hazardous,1,0,1,461,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+"N,N-dimethylacetamide",127-19-5,CC(=O)N(C)C,hazardous,1,0,1,710,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+N-methyl-2-pyrrolidone,872-50-4,CN1CCCC1=O,hazardous,1,0,1,733,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+dichloromethane,75-09-2,ClCCl,hazardous,1,0,1,702,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+"1,4-dioxane",123-91-1,C1COCCO1,hazardous,1,0,1,58,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+"1,2-dimethoxyethane",110-71-4,COCCOC,hazardous,1,0,1,457,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+methyl tert-butyl ether,1634-04-4,COC(C)(C)C,hazardous,1,0,1,701,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+n-hexane,110-54-3,CCCCCC,hazardous,1,0,1,594,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+diisopropyl ether,108-20-3,CC(C)OC(C)C,hazardous,1,0,1,633,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+n-pentane,109-66-0,CCCCC,hazardous,1,0,1,789,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+diethyl ether,60-29-7,CCOCC,highly_hazardous,0,0,1,424,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+benzene,71-43-2,c1ccccc1,highly_hazardous,0,0,1,283,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+chloroform,67-66-3,ClC(Cl)Cl,highly_hazardous,0,0,1,348,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+carbon tetrachloride,56-23-5,ClC(Cl)(Cl)Cl,highly_hazardous,0,0,1,334,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+"1,2-dichloroethane",107-06-2,ClCCCl,highly_hazardous,0,0,1,530,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
+nitromethane,75-52-5,C[N+](=O)[O-],highly_hazardous,0,0,1,748,CHEM21 guide (Prat et al. Green Chem. 2016 18 288),no
