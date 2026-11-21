@@ -21,6 +21,34 @@ clean:
   miscible_cap_wt: 50.0   # 'M' -> censored label: true value >= cap (max numeric in Zhou ~52 wt%)
   dedupe: first           # one row per canonical SMILES; keep the first solvent in file order
 
+descriptors:
+  # Liquid molar volume V_s = a * McGowan_Vx + b, fitted on these known values (cm3/mol, 25 °C, Hansen handbook).
+  molar_volume_anchors:
+    O: 18.0            # water
+    CO: 40.7           # methanol
+    CCO: 58.5          # ethanol
+    CC(C)=O: 74.0      # acetone
+    CCOC(C)=O: 98.5    # ethyl acetate
+    Cc1ccccc1: 106.8   # toluene
+    CCCCCC: 131.6      # n-hexane
+    C1CCCCC1: 108.7    # cyclohexane
+    ClC(Cl)Cl: 80.7    # chloroform
+    CS(C)=O: 71.3      # DMSO
+    CN(C)C=O: 77.0     # DMF
+    C1CCOC1: 81.7      # THF
+    c1ccccc1: 89.4     # benzene
+    CCCCCCC: 147.4     # n-heptane
+    CCCCO: 91.5        # 1-butanol
+    CC#N: 52.6         # acetonitrile
+    ClCCl: 63.9        # dichloromethane
+  solvent_features: [dD, dP, dH, bp_C, V_cm3_mol]
+  solvent_flags: [has_hsp, has_bp]
+  polymer_features: [Tg_K, Tm_K, crystallinity_pct, density_g_cm3]
+  polymer_flags: [has_Tm]
+
+physics:
+  A0: 0.34               # entropic part of chi (Hansen/Flory-Huggins convention)
+
 split:
   fractions: [0.8, 0.1, 0.1]   # train / val / test
   seed: 42
