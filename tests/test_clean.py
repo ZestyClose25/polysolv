@@ -41,9 +41,8 @@ def test_toy_clean():
     assert a.y.item() == pytest.approx(np.log10(0.5 + 1e-3))
 
 
-def test_real_clean(zhou_long, cfg):
-    c = cfg["clean"]
-    clean, dropped = clean_zhou(zhou_long, c["log_floor_wt"], c["miscible_cap_wt"])
+def test_real_clean(zhou_long, zhou_clean):
+    clean, dropped = zhou_clean
     assert len(clean) + len(dropped) == len(zhou_long)
     assert clean["y"].notna().all()
     assert clean["censored"].sum() == 2

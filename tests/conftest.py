@@ -19,3 +19,11 @@ def zhou_long(cfg):
         pytest.skip(f"raw Zhou file not found: {path}")
     z = cfg["zhou"]
     return load_zhou(path, z["sheet_main"], z["sheet_info"], z["rt_K"], z["polymer_rename"])
+
+
+@pytest.fixture(scope="session")
+def zhou_clean(zhou_long, cfg):
+    from polysolv.data.clean import clean_zhou
+
+    c = cfg["clean"]
+    return clean_zhou(zhou_long, c["log_floor_wt"], c["miscible_cap_wt"])

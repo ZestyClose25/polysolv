@@ -3,14 +3,12 @@
 import pandas as pd
 import pytest
 
-from polysolv.data.clean import clean_zhou
 from polysolv.data.merge import merge_all
 
 
 @pytest.fixture(scope="module")
-def tables(zhou_long, cfg):
-    c = cfg["clean"]
-    clean, _ = clean_zhou(zhou_long, c["log_floor_wt"], c["miscible_cap_wt"])
+def tables(zhou_clean, cfg):
+    clean, _ = zhou_clean
     props = pd.read_csv(cfg["paths"]["polymer_props"])
     return clean, merge_all(clean, props)
 
