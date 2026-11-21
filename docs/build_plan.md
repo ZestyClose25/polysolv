@@ -134,7 +134,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 
 ### Phase 4 — Generalization, ensemble, screening
 - [ ] **T24 Leave-one-polymer-out** [U] — train on 7 polymers, predict the 8th (at least PS and PET held out); report honestly.
-- [ ] **T25 Stage 2 (optional)** [U] — PS>PET pairwise rank loss; check top-k selectivity changes.
+- [x] **T25 Stage 2 (optional)** [U] — PS>PET pairwise rank loss; check top-k selectivity changes.
 - [ ] **T26 ensemble.py** [U] — 5 seeds, mean ± σ; calibration plot (error vs σ).
 - [ ] **T27 mass_balance.py** [U] + tests [C] — `required_solvent`, `pet_leaching`, `ps_purity`.
   *Done when:* worked example (100 g, 30% PS, S_PS_lower 38, S_PET_upper 0.02, c_max 10) → 270 g solvent, ~0.054 g PET, ~99.8% purity.
@@ -182,6 +182,9 @@ Key numbers:
     Spearman PS RT 0.83 / Th 0.89, PET RT 0.73 / Th 0.89. Selectivity (69 HSP test solvents): top-10 0.50, top-20 0.40, margin ρ 0.92.
     Sanity: overfits 100 rows (train MSE 4e-6, R² 1.000). Logs: results/training_logs/ (polysolv_stage1.log/_history.csv/_curves.png)
   - Leave-one-polymer-out: 
+  - Stage 2 (T25, w_rank 0.2, RankNet on PS−PET margins of 649 train solvents at Th, 64 per step; 16 min):
+    test R² 0.886 (stage 1 0.894); selectivity top-10 0.50 / top-20 0.40 (unchanged), margin ρ 0.93 (0.92); external AUC 0.93 (same),
+    Table 3 MAE 1.12 (1.17), ρ 0.84 (0.80). -> changes are within single-seed noise; ensemble members use stage 1 (ensemble.w_rank = 0).
   - Plain two-tower GIN (no physics, 1000/T input): test MAE 0.236, RMSE 0.425, R² 0.923; Spearman PS 0.91/0.92, PET 0.83/0.91;
     selectivity 0.50 / 0.45 / margin ρ 0.90; external AUC 0.89. -> better than Polysolv on Zhou-test regression (honest result).
   - External experimental test (41 rows; 34 of the solvents are in the train split, so this is COSMO->experiment transfer):
