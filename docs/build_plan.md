@@ -100,7 +100,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
   *Done when:* every row has a source; no row is a Zhou Table 1 calibration point.
 - [x] **T7 clean.py** [U] — drop NaN per row; drop duplicated Th rows of solvents without bp; `M` → censored at cap; `log10(wt% + 1e-3)`; canonical SMILES; drop invalid; dedupe (same `cosmo_name` → keep one; decide stereoisomers).
   *Done when:* clean tables saved, dropped rows logged.
-- [ ] **T8 merge.py** [U] — attach solvent & polymer descriptors; write `solvents.csv`, `polymers.csv`, `zhou_long.csv`.
+- [x] **T8 merge.py** [U] — attach solvent & polymer descriptors; write `solvents.csv`, `polymers.csv`, `zhou_long.csv`.
   *Done when:* no unexplained missing descriptors for Zhou rows.
 - [ ] **T9 splits.py** [U] — scaffold split (Zhou), grouped by canonical SMILES → `splits.json`; fixed seed.
   *Done when:* zero solvent overlap between Zhou train/test.
