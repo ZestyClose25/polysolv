@@ -12,7 +12,7 @@ Trained on the train-split solvents, early stopping on val, evaluated on test wi
 the same metrics as the Hansen baseline (T15).
 
 Usage:  python -m baselines.xgb_baseline [--config configs/default.yaml]
-Writes: results/xgb_baseline.json, results/xgb_test_predictions.csv
+Writes: results/xgb_baseline.json (incl. external experimental test), results/xgb_test_predictions.csv
 """
 
 from __future__ import annotations
@@ -28,7 +28,10 @@ from rdkit import Chem
 from rdkit.Chem import rdFingerprintGenerator
 
 from polysolv.config import DEFAULT_CONFIG, REPO_ROOT, load_config
-from polysolv.evaluate import per_group_spearman, regression_metrics, selectivity_frame, selectivity_metrics
+from polysolv.dataset import load_processed
+from polysolv.evaluate import (external_metrics, per_group_spearman, regression_metrics, selectivity_frame,
+                               selectivity_metrics)
+from polysolv.inference import external_rows
 
 log = logging.getLogger("xgb_baseline")
 
@@ -137,6 +140,10 @@ def main(config_path: str) -> dict:
         "test_selectivity_all": selectivity_metrics(score, sel_all),
         "val_regression": regression_metrics(y[part["val"]], predict(part["val"])),
     }
+    ext, ext_solv, _ = external_rows(pd.read_csv(cfg["paths"]["exp_test"]), load_processed(d), cfg)
+    X_ext, _ = build_features(ext, ext_solv, polymers, xcfg)
+    ext["y_pred"] = model.predict(xgb.DMatrix(X_ext, feature_names=names), iteration_range=(0, model.best_iteration + 1))
+    results["external"] = external_metrics(ext, "y_pred", cfg["external"]["good_min_wt"], cfg["clean"]["log_floor_wt"])
     res_dir = REPO_ROOT / "results"
     res_dir.mkdir(exist_ok=True)
     (res_dir / "xgb_baseline.json").write_text(json.dumps(results, indent=1), encoding="utf-8")
@@ -146,6 +153,7 @@ def main(config_path: str) -> dict:
     log.info("TEST  Spearman PS/RT %.3f PS/Th %.3f PET/RT %.3f PET/Th %.3f",
              *(results["test_spearman"][k] for k in ("PS/RT", "PS/Th", "PET/RT", "PET/Th")))
     log.info("TEST  selectivity (HSP solvents): %s", results["test_selectivity_hsp_solvents"])
+    log.info("EXTERNAL: %s", results["external"]["all"])
     return results
 
 

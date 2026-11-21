@@ -1,6 +1,18 @@
 {
  "seed": 42,
- "note": "no training; HSP solvents only (hsp_mask = 1)",
+ "note": "no training; HSP solvents only (hsp_mask = 1); head = 3 numbers fitted on train",
+ "head": {
+  "c0": 0.4554448425769806,
+  "slope": 0.5,
+  "c2": -2.056769847869873,
+  "prior_mse": 1.8219654560089111
+ },
+ "test_regression_prior_head": {
+  "n": 1315,
+  "MAE": 1.1764248818040617,
+  "RMSE": 1.3635221280050582,
+  "R2": 0.20546623075875847
+ },
  "test": {
   "spearman_neg_ra2": {
    "EVOH/RT": 0.4327192011268234,
@@ -108,5 +120,35 @@
    "n_selective": 100,
    "base_rate": 0.1360544217687075
   }
+ },
+ "external": {
+  "all": {
+   "n": 41,
+   "measured_n": 13,
+   "measured_MAE": 1.5917632203259227,
+   "measured_spearman": 0.17930618069776824,
+   "n_good": 18,
+   "n_non": 23,
+   "AUC": 0.7415458937198067,
+   "accuracy": 0.7804878048780488
+  },
+  "handbook": {
+   "n": 25,
+   "n_good": 11,
+   "n_non": 14,
+   "AUC": 0.8181818181818182,
+   "accuracy": 0.84
+  },
+  "zhou_table3": {
+   "n": 16,
+   "measured_n": 13,
+   "measured_MAE": 1.5917632203259227,
+   "measured_spearman": 0.17930618069776824,
+   "n_good": 7,
+   "n_non": 9,
+   "AUC": 0.5714285714285714,
+   "accuracy": 0.6875
+  },
+  "AUC_neg_chi_prior": 0.782608695652174
  }
 }

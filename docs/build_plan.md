@@ -129,7 +129,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 - [x] **T21 losses.py** [U] — censored MSE, pairwise rank, physics_reg.
 - [x] **T22 train.py + configs/default.yaml** [U core, C for logging/ckpt] — Stage 1 on Zhou.
   *Done when:* val loss decreases; overfits 100 rows when asked (sanity).
-- [ ] **T23 evaluate.py** [U metrics, C plots] — MAE/RMSE/R²/per-polymer Spearman on Zhou test; external experimental test set; compare with T15–T16.
+- [x] **T23 evaluate.py** [U metrics, C plots] — MAE/RMSE/R²/per-polymer Spearman on Zhou test; external experimental test set; compare with T15–T16.
   *Done when:* table: HSP vs XGB vs Polysolv-stage1 (Zhou test + external test).
 
 ### Phase 4 — Generalization, ensemble, screening
@@ -159,7 +159,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T23
+Current task: T24
 Done: T1–T16 (Phase 1 and Phase 2 complete)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
@@ -182,7 +182,13 @@ Key numbers:
     Spearman PS RT 0.83 / Th 0.89, PET RT 0.73 / Th 0.89. Selectivity (69 HSP test solvents): top-10 0.50, top-20 0.40, margin ρ 0.92.
     Sanity: overfits 100 rows (train MSE 4e-6, R² 1.000). Logs: results/training_logs/ (polysolv_stage1.log/_history.csv/_curves.png)
   - Leave-one-polymer-out: 
-  - External experimental test: 
+  - Plain two-tower GIN (no physics, 1000/T input): test MAE 0.236, RMSE 0.425, R² 0.923; Spearman PS 0.91/0.92, PET 0.83/0.91;
+    selectivity 0.50 / 0.45 / margin ρ 0.90; external AUC 0.89. -> better than Polysolv on Zhou-test regression (honest result).
+  - External experimental test (41 rows; 34 of the solvents are in the train split, so this is COSMO->experiment transfer):
+    AUC good-vs-non / accuracy (pred >= 1 wt%) / Table 3 MAE (13 measured, log10) / Table 3 ρ:
+    Hansen 0.74 / 0.78 / 1.59 / 0.18 · XGB 0.88 / 0.80 / 1.22 / 0.80 · plain GIN 0.89 / 0.83 / 1.21 / 0.77 · Polysolv 0.93 / 0.85 / 1.17 / 0.80.
+    COSMO-RS itself vs the same 13 measurements: MAE 1.27, ρ 0.78 (ceiling for COSMO-trained models).
+    Hansen prior + 3-number head on Zhou test: R² 0.21. Full table: results/comparison.md
 Decisions changed since plan:
   - Kern et al. dropped (data not public). Novelty 2 = external experimental test instead of multi-fidelity. No classification head, no BCE.
   - Package layout: src/polysolv (installed with `pip install -e .`), imports `from polysolv...`.
@@ -206,7 +212,7 @@ Decisions changed since plan:
   - XGB features include raw HSP descriptors but NOT chi_prior/Ra² (keeps it a non-physics baseline).
 Open issues:
 1. polymer_props.csv: all rows `verified = no`. Thermal values are typical handbook values (check against Polymer Handbook). HSP for PE/PET/PP/PVC/PA6/PA66 = Hansen handbook averages (accudynetest polytable_02). PS from Materials 2018, 11, 1529 (no R0). EVOH HSP is an estimate (PE/PVOH volume-fraction mix).
-2. Polysolv must beat XGBoost (R² 0.89) to justify the GNN; the physics layer's value may show more in selectivity, temperature extrapolation and leave-one-polymer-out than in test R².
+2. Polysolv (R² 0.894) ties XGBoost (0.888) but loses to the plain GIN (0.923) on Zhou-test regression; it wins on external AUC (0.93) and selectivity margin ρ (0.92). The physics layer has to earn its place in leave-one-polymer-out (T24) and temperature behaviour (T31); report this trade-off honestly.
 3. The Hansen prior's absolute χ is too high for good PS solvents (toluene 0.65, limonene 0.68; THF 0.48). Its ranking is reasonable at RT (ρ 0.66) but weaker at Th (ρ 0.41) — the learned ΔA/ΔB must fix this; check in T31.
 4. McGowan-based V_s overestimates very large molecules (triolein ~ +14 %); fine for a prior.
 5. RT taken as 298.15 K (assumption, state in report).
