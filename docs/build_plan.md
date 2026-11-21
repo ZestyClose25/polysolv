@@ -135,7 +135,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ### Phase 4 — Generalization, ensemble, screening
 - [ ] **T24 Leave-one-polymer-out** [U] — train on 7 polymers, predict the 8th (at least PS and PET held out); report honestly.
 - [x] **T25 Stage 2 (optional)** [U] — PS>PET pairwise rank loss; check top-k selectivity changes.
-- [ ] **T26 ensemble.py** [U] — 5 seeds, mean ± σ; calibration plot (error vs σ).
+- [x] **T26 ensemble.py** [U] — 5 seeds, mean ± σ; calibration plot (error vs σ).
 - [x] **T27 mass_balance.py** [U] + tests [C] — `required_solvent`, `pet_leaching`, `ps_purity`.
   *Done when:* worked example (100 g, 30% PS, S_PS_lower 38, S_PET_upper 0.02, c_max 10) → 270 g solvent, ~0.054 g PET, ~99.8% purity.
 - [ ] **T28 screen.py + run_screening.py** [U] — T grid, rules, score, mass balance → ranked CSV:
@@ -159,7 +159,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T26 (T24 partial: resume LOPO, see Leave-one-polymer-out below)
+Current task: T28 (T24 partial: resume LOPO, see Leave-one-polymer-out below)
 Done: T1–T16 (Phase 1 and Phase 2 complete)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
@@ -199,6 +199,10 @@ Key numbers:
     Hansen 0.74 / 0.78 / 1.59 / 0.18 · XGB 0.88 / 0.80 / 1.22 / 0.80 · plain GIN 0.89 / 0.83 / 1.21 / 0.77 · Polysolv 0.93 / 0.85 / 1.17 / 0.80.
     COSMO-RS itself vs the same 13 measurements: MAE 1.27, ρ 0.78 (ceiling for COSMO-trained models).
     Hansen prior + 3-number head on Zhou test: R² 0.21. Full table: results/comparison.md
+  - Ensemble (T26, seeds 42–46, stage 1 settings, ~10–20 min per member): test MAE 0.300, RMSE 0.476, R² 0.904 (members 0.874–0.903);
+    selectivity top-10 0.50 / top-20 0.40, margin ρ 0.94; external AUC 0.91, accuracy 0.83, Table 3 MAE 1.18.
+    Calibration (results/ensemble_calibration.png): Spearman(σ, |err|) 0.45 -> σ ranks errors usefully, but mean σ 0.13 and
+    only 25 % of errors within 1σ (47 % within 2σ) -> σ is OVERconfident (member spread misses label noise); use σ for ranking/flags, not as a calibrated interval.
   - Mass balance (T27): worked example 100 g, 30 % PS, S_PS_lower 38, S_PET_upper 0.02, c_max 10 -> c 10 wt%, 270 g solvent (2.7 g/g), 0.054 g PET, 99.82 % purity (tests pass).
 Decisions changed since plan:
   - Kern et al. dropped (data not public). Novelty 2 = external experimental test instead of multi-fidelity. No classification head, no BCE.

@@ -127,3 +127,22 @@ flowchart LR
 ## 6. Optional: dissolution time
 
 Not learned (little data). Can be estimated post-hoc with a simple swelling/diffusion model using predicted χ and particle size.
+
+---
+
+## 7. As implemented (Phase 3–4)
+
+| Module | What it does |
+|---|---|
+| `dataset.py` | `PairDataset` row = (polymer, solvent, T). `collate` batches only the **unique** graphs of a mini-batch and maps rows to them (`s_index`, `p_index`). Flags `censored` (`M`, ≥ 50 wt%) and `floored` (wt% < 1e-3). |
+| `model/towers.py` | GIN tower: atom embedding → 4 × [GINEConv → BN → ReLU → dropout] with residual connections → sum pool; descriptor MLP on [pool, descriptors] → h (128). |
+| `model/interaction.py` | `[h_p, h_s, h_p⊙h_s, \|h_p−h_s\|, Ra²/100, mask]` → MLP (256, 128) → (ΔA, ΔB/300 K). Last layer zero-initialised → an untrained model **is** the Hansen prior. |
+| `model/flory_huggins.py` | A = 0.34 + ΔA, B = B_HSP·mask + ΔB, χ = A + B/T. |
+| `model/heads.py` | raw = c0 − softplus(c1)·χ + c2·x_cryst (log10 wt%), y_pred = log10(10^raw + 1e-3) — the label's own floor. Init: c0, c2 fitted on the prior, slope = best of a grid. |
+| `losses.py` | censored MSE on raw (one-sided for `M` and for floor rows), RankNet loss on PS−PET margins (stage 2), L2 on ΔA, ΔB/300. |
+| `train.py` | AdamW 1e-3, batch 256, ReduceLROnPlateau, early stopping on val MSE (patience 30). Logs per epoch → `results/training_logs/`. |
+| `inference.py` | Featurises any (polymer, SMILES, T): Zhou solvents reuse Zhou descriptors; new solvents get McGowan V_s and optional HSP/bp. |
+| `ensemble.py` | 5 seeds, mean ± σ, σ-binned calibration. |
+| `mass_balance.py`, `screen.py`, `dissolution.py` | Screening grid 25 °C → min(bp − 10, 120 °C), conservative PS_lower / PET_upper (± 1σ), mass balance, Fickian time estimate. |
+
+**Learned χ is an effective χ.** Its ordering is physical (PS at RT: water 4.7 > methanol 2.8 > hexane 1.4 > toluene 0.5 > THF 0.06; B > 0, so solubility rises with T), but the head places 10 wt% at χ ≈ 0.1, not at the Flory–Huggins χ_c = 0.5. Absolute χ values should not be read against 0.5.
