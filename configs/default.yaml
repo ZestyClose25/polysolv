@@ -77,3 +77,31 @@ split:
   seed: 42
   # Ring solvents grouped by Bemis–Murcko scaffold; acyclic solvents are their own group.
   big_group_frac: 0.5          # groups larger than this fraction of the test size always go to train
+
+model:                    # T18-T20 physics-informed two-tower GIN
+  hidden: 128             # GIN width and size of h_p, h_s
+  gin_layers: 4
+  dropout: 0.1
+  interaction_hidden: [256, 128]
+  ra2_scale: 100.0        # Ra2 (MPa) / scale -> interaction input
+  dB_scale: 300.0         # K; dB = dB_scale * network output (last layer starts at 0 -> model starts at the Hansen prior)
+  physics: true           # false = plain two-tower GIN baseline (MLP -> log10 wt% directly, 1000/T as input)
+
+loss:                     # T21
+  w_mse: 1.0              # censored MSE on log10 wt%
+  w_rank: 0.0             # stage 2 (T25) sets this > 0: pairwise PS-over-PET selectivity rank loss
+  w_phys: 1.0e-3          # L2 on dA and dB/dB_scale (stay close to the Hansen prior)
+  rank_solvents: 64       # train solvents per rank mini-batch (both PS and PET at Th)
+
+train:                    # T22
+  epochs: 200
+  batch_size: 256
+  lr: 1.0e-3
+  weight_decay: 1.0e-5
+  patience: 30            # early stopping on val loss
+  lr_factor: 0.5          # ReduceLROnPlateau
+  lr_patience: 10
+  grad_clip: 5.0
+  device: cuda            # falls back to cpu if CUDA is not available
+  checkpoint_dir: checkpoints
+  log_dir: results/training_logs
