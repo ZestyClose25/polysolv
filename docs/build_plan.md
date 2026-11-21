@@ -98,7 +98,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
   *Done when:* tests pass (row count, PS/PET present, wt% ≥ 0, sane T).
 - [x] **T6 exp_test.csv** [U] — external experimental test set: Zhou Table 3 (read from the PDF) + Polymer Handbook / Hansen handbook good/non-solvent pairs for PS and PET. Columns: polymer, solvent, CAS, SMILES, T_K, wt% (if measured), label (good/non), source.
   *Done when:* every row has a source; no row is a Zhou Table 1 calibration point.
-- [ ] **T7 clean.py** [U] — drop NaN per row; drop duplicated Th rows of solvents without bp; `M` → censored at cap; `log10(wt% + 1e-3)`; canonical SMILES; drop invalid; dedupe (same `cosmo_name` → keep one; decide stereoisomers).
+- [x] **T7 clean.py** [U] — drop NaN per row; drop duplicated Th rows of solvents without bp; `M` → censored at cap; `log10(wt% + 1e-3)`; canonical SMILES; drop invalid; dedupe (same `cosmo_name` → keep one; decide stereoisomers).
   *Done when:* clean tables saved, dropped rows logged.
 - [ ] **T8 merge.py** [U] — attach solvent & polymer descriptors; write `solvents.csv`, `polymers.csv`, `zhou_long.csv`.
   *Done when:* no unexplained missing descriptors for Zhou rows.
