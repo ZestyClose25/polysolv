@@ -138,7 +138,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 - [x] **T26 ensemble.py** [U] — 5 seeds, mean ± σ; calibration plot (error vs σ).
 - [x] **T27 mass_balance.py** [U] + tests [C] — `required_solvent`, `pet_leaching`, `ps_purity`.
   *Done when:* worked example (100 g, 30% PS, S_PS_lower 38, S_PET_upper 0.02, c_max 10) → 270 g solvent, ~0.054 g PET, ~99.8% purity.
-- [ ] **T28 screen.py + run_screening.py** [U] — T grid, rules, score, mass balance → ranked CSV:
+- [x] **T28 screen.py + run_screening.py** [U] — T grid, rules, score, mass balance → ranked CSV:
   `solvent | T window | S_PS sat | loading | solvent:waste | PS purity | confidence | greenness`.
   *Done when:* sanity — known PS solvents (e.g. limonene/dipentene) rank high; PET-dissolving solvents (e.g. DMF at high T) are rejected. (p-cymene is not in Zhou; GVL has no Th in Zhou — check them as model predictions only.)
 - [x] **T29 Dissolution time (optional)** [U] — simple diffusion/swelling estimate from χ + particle size.
@@ -159,8 +159,8 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T28 (T24 partial: resume LOPO, see Leave-one-polymer-out below)
-Done: T1–T16 (Phase 1 and Phase 2 complete)
+Current task: T30 (T24 partial: resume LOPO first, see Leave-one-polymer-out below)
+Done: T1–T23, T25–T29 (Phases 1–3 complete; Phase 4 except T24, which is partial)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
   - Zhou rows after cleaning: 13 732 (981 molecules). Dropped: 1296 Th-copy-of-RT, 748 missing label, 336 duplicate molecule, 0 invalid SMILES

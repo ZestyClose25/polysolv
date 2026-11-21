@@ -23,6 +23,9 @@ python -m scripts.run_training --no-physics   # plain two-tower GIN baseline -> 
 python -m scripts.compare_models           # results/comparison.md (all models, Zhou test + external test)
 python -m scripts.run_lopo                 # leave-one-polymer-out (~16 min per polymer) -> results/lopo.md; resumable with --polymers
 python -m scripts.run_lopo --no-physics --polymers PS PET   # same for the plain GIN
+python -m scripts.run_ensemble             # 5-seed deep ensemble (~1 h) -> results/polysolv_ensemble.json, ensemble_calibration.png
+python -m scripts.run_screening --target PS --other PET --waste-mass 100 --ps-fraction 0.3   # -> results/screening_PS_PET.csv
+python -m scripts.run_screening --min-greenness 0 --tag _all_solvents                        # sanity check incl. DMF
 pytest -q
 ```
 
