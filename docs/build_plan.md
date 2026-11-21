@@ -124,7 +124,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 - [x] **T18 towers.py** [U] — GIN tower (4×GINEConv, 128, BN, ReLU, dropout 0.1, sum-pool).
 - [x] **T19 interaction.py + flory_huggins.py + heads.py** [U] — interaction vector, MLP → ΔA, ΔB; χ = A + B/T; regression head.
   *Done when:* unit test: hand-set A, B give expected χ and monotone outputs.
-- [ ] **T20 polysolv_net.py** [U] — wire everything; forward returns χ, log wt%.
+- [x] **T20 polysolv_net.py** [U] — wire everything; forward returns χ, log wt%.
   *Done when:* one batch forward/backward works, shapes correct.
 - [ ] **T21 losses.py** [U] — censored MSE, pairwise rank, physics_reg.
 - [ ] **T22 train.py + configs/default.yaml** [U core, C for logging/ckpt] — Stage 1 on Zhou.
@@ -159,7 +159,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T20
+Current task: T21
 Done: T1–T16 (Phase 1 and Phase 2 complete)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
