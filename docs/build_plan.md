@@ -126,7 +126,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
   *Done when:* unit test: hand-set A, B give expected χ and monotone outputs.
 - [x] **T20 polysolv_net.py** [U] — wire everything; forward returns χ, log wt%.
   *Done when:* one batch forward/backward works, shapes correct.
-- [ ] **T21 losses.py** [U] — censored MSE, pairwise rank, physics_reg.
+- [x] **T21 losses.py** [U] — censored MSE, pairwise rank, physics_reg.
 - [ ] **T22 train.py + configs/default.yaml** [U core, C for logging/ckpt] — Stage 1 on Zhou.
   *Done when:* val loss decreases; overfits 100 rows when asked (sanity).
 - [ ] **T23 evaluate.py** [U metrics, C plots] — MAE/RMSE/R²/per-polymer Spearman on Zhou test; external experimental test set; compare with T15–T16.
@@ -159,7 +159,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T21
+Current task: T22
 Done: T1–T16 (Phase 1 and Phase 2 complete)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
