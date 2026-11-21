@@ -33,4 +33,7 @@ where = ["src"]
 testpaths = ["tests"]
 pythonpath = ["src", "."]
 addopts = "-q"
-filterwarnings = ["ignore:`torch.jit.script` is deprecated:FutureWarning"]
+filterwarnings = [
+    "ignore:`torch.jit.script` is deprecated:FutureWarning",
+    "ignore:Failing to pass a value to the 'type_params':DeprecationWarning",
+]
