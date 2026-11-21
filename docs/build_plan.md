@@ -141,7 +141,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 - [ ] **T28 screen.py + run_screening.py** [U] — T grid, rules, score, mass balance → ranked CSV:
   `solvent | T window | S_PS sat | loading | solvent:waste | PS purity | confidence | greenness`.
   *Done when:* sanity — known PS solvents (e.g. limonene/dipentene) rank high; PET-dissolving solvents (e.g. DMF at high T) are rejected. (p-cymene is not in Zhou; GVL has no Th in Zhou — check them as model predictions only.)
-- [ ] **T29 Dissolution time (optional)** [U] — simple diffusion/swelling estimate from χ + particle size.
+- [x] **T29 Dissolution time (optional)** [U] — simple diffusion/swelling estimate from χ + particle size.
 
 ### Phase 5 — Experiments for the report
 - [ ] **T30 Ablations** [U run, C plotting] — −physics layer, −polymer descriptors, −interaction features, +σ-profiles (opt.), `*` dummy vs ring-closure.
@@ -204,6 +204,12 @@ Key numbers:
     Calibration (results/ensemble_calibration.png): Spearman(σ, |err|) 0.45 -> σ ranks errors usefully, but mean σ 0.13 and
     only 25 % of errors within 1σ (47 % within 2σ) -> σ is OVERconfident (member spread misses label noise); use σ for ranking/flags, not as a calibrated interval.
   - Mass balance (T27): worked example 100 g, 30 % PS, S_PS_lower 38, S_PET_upper 0.02, c_max 10 -> c 10 wt%, 270 g solvent (2.7 g/g), 0.054 g PET, 99.82 % purity (tests pass).
+  - Screening (T28, 5-seed ensemble, 100 g waste, 30 % PS, greenness >= 2): 20 of 41 green solvents pass (results/screening_PS_PET.csv).
+    Top 5: CPME (65–95 °C), diethyl carbonate (70–100), eucalyptol (95–120), butanone (30–60), THF (25–55). d-limonene #11 (100–120 °C),
+    toluene #9, 2-MeTHF #10, p-cymene #17 (medium confidence, not in Zhou). All run at the c_max 10 wt% cap -> 2.7 g solvent/g waste; PS purity 95.7–98.5 %.
+    Sanity: DMF (screened with --min-greenness 0) rejected at every T (PET_upper 1.1–6.8 wt% at 85–120 °C); alcohols, water, alkanes, glycols rejected (low PS).
+    GVL and DMSO reach PS >= 10 wt% and PET <= 0.5 wt%, but never at the same T. Cyrene rejected (PS_lower 3.9 wt%, model-only).
+  - Dissolution time (T29, order of magnitude, 0.5 mm flake, D0 1e-10 m²/s): 16–64 min for the passing solvents.
 Decisions changed since plan:
   - Kern et al. dropped (data not public). Novelty 2 = external experimental test instead of multi-fidelity. No classification head, no BCE.
   - Package layout: src/polysolv (installed with `pip install -e .`), imports `from polysolv...`.
@@ -225,6 +231,9 @@ Decisions changed since plan:
   - Collate batches only the unique graphs per mini-batch; GIN layers have residual connections; interaction last layer zero-init (model starts at prior + head).
   - Shared metrics live in src/polysolv/evaluate.py (Spearman, MAE/RMSE/R², selectivity top-k); T23 extends it.
   - XGB features include raw HSP descriptors but NOT chi_prior/Ra² (keeps it a non-physics baseline).
+  - Screening T grid capped at 120 °C (= Zhou's Th cap, no training data hotter). Confidence = ensemble σ (high < 0.15 < medium < 0.30 < low), one level lower if the solvent is not in Zhou.
+  - green_solvents.csv gained bp_C (p-cymene, Cyrene, alpha-pinene, GVL, glycerol) and Cyrene HSP (Sherwood 2014) for solvents Zhou lacks; props_source column.
+  - Dissolution time uses the drive (chi* − chi), chi* = the head's chi at 10 wt%, because the learned chi is an effective chi (threshold ≈ 0.1, not 0.5).
 Open issues:
 1. polymer_props.csv: all rows `verified = no`. Thermal values are typical handbook values (check against Polymer Handbook). HSP for PE/PET/PP/PVC/PA6/PA66 = Hansen handbook averages (accudynetest polytable_02). PS from Materials 2018, 11, 1529 (no R0). EVOH HSP is an estimate (PE/PVOH volume-fraction mix).
 2. Polysolv (R² 0.894) ties XGBoost (0.888) but loses to the plain GIN (0.923) on Zhou-test regression; it wins on external AUC (0.93) and selectivity margin ρ (0.92). The physics layer has to earn its place in leave-one-polymer-out (T24) and temperature behaviour (T31); report this trade-off honestly.
