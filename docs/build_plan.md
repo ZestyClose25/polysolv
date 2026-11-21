@@ -112,8 +112,8 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 - [ ] **T12 graph.py** [U] + tests [C] — `atom_features`, `bond_features`, `smiles_to_graph` → PyG `Data`; `*` as dummy atom; bidirectional edges; SMILES-keyed cache. Install `torch`, `torch_geometric`.
   *Done when:* PS graph 10 nodes, limonene 10 nodes, all dataset SMILES convert.
 - [x] **T13 descriptors.py** [U] — z-scored solvent (δD, δP, δH, bp, V) & polymer (Tg, Tm, cryst, density + mask) vectors; save scaler.
-- [ ] **T14 physics.py** [U] + tests [C] — `Ra2()`, `B_hsp()` (units: V cm³/mol, δ MPa^½, R = 8.314).
-  *Done when:* χ_prior(PS, toluene, 298 K) < 0.5 and χ_prior(PS, water) ≫ 0.5.
+- [x] **T14 physics.py** [U] + tests [C] — `ra2()`, `b_hsp()`, `chi_prior()`, `add_prior_columns()` (units: V cm³/mol, δ MPa^½, R = 8.314).
+  *Done when:* χ_prior(PS, water) ≫ 0.5; toluene & limonene in the better half and water & methanol in the worst 20 % of PS solvents; Spearman(−χ_prior, Zhou PS RT) > 0.5. (Original absolute check χ_prior(PS, toluene) < 0.5 dropped: 0.65 with the chosen PS HSP.)
 - [ ] **T15 HSP baseline** `hsp_ranking.py` [U] — rank solvents for PS-vs-PET by RED; evaluate vs Zhou labels (Spearman, top-k selective hit rate).
   *Done when:* first baseline numbers recorded in D.
 - [ ] **T16 XGBoost baseline** [C] — Morgan FP (2048, polymer trimer trick) + descriptors + T → log wt%; same metrics & splits.

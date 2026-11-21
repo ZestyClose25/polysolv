@@ -20,6 +20,7 @@ from polysolv.data.load_zhou import load_zhou
 from polysolv.data.merge import merge_all
 from polysolv.data.splits import save_splits, scaffold_split
 from polysolv.features.descriptors import add_molar_volume, build_descriptors, save_scalers
+from polysolv.features.physics import add_prior_columns
 
 log = logging.getLogger("build_dataset")
 
@@ -46,6 +47,8 @@ def main(config_path: str) -> None:
     d = cfg["descriptors"]
     tables = merge_all(clean, pd.read_csv(paths["polymer_props"]))
     tables["solvents"] = add_molar_volume(tables["solvents"], d["molar_volume_anchors"])
+    tables["zhou_long"] = add_prior_columns(tables["zhou_long"], tables["solvents"], tables["polymers"],
+                                            cfg["physics"]["A0"])
     for name, df in tables.items():
         df.to_csv(out / f"{name}.csv", index=False)
 
