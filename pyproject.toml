@@ -16,6 +16,7 @@ dependencies = [
     "pyyaml>=6.0",
     "torch>=2.4",            # CUDA build: pip install torch --index-url https://download.pytorch.org/whl/cu130
     "torch_geometric>=2.6",
+    "matplotlib>=3.8",       # training curves, calibration plot
 ]
 
 [project.optional-dependencies]
