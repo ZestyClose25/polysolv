@@ -10,12 +10,14 @@ See `docs/build_plan.md` (tasks + progress log) and `docs/architecture.md`.
 python -m venv .venv
 .venv\Scripts\activate
 pip install torch --index-url https://download.pytorch.org/whl/cu130   # CUDA build (or plain `pip install torch` for CPU)
-pip install -e .[dev]
+pip install -e .[dev,baselines]
 ```
 
 ## Commands
 ```powershell
 python -m scripts.build_dataset            # data/raw -> data/processed
+python -m baselines.hsp_ranking            # Hansen baseline   -> results/hsp_baseline.json
+python -m baselines.xgb_baseline           # XGBoost baseline  -> results/xgb_baseline.json (~4 min)
 pytest -q
 ```
 

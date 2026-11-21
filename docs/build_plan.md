@@ -116,7 +116,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
   *Done when:* χ_prior(PS, water) ≫ 0.5; toluene & limonene in the better half and water & methanol in the worst 20 % of PS solvents; Spearman(−χ_prior, Zhou PS RT) > 0.5. (Original absolute check χ_prior(PS, toluene) < 0.5 dropped: 0.65 with the chosen PS HSP.)
 - [x] **T15 HSP baseline** `hsp_ranking.py` [U] — rank solvents for PS-vs-PET by Hansen distance (Ra², χ_prior; RED not usable: no R0 for PS); evaluate vs Zhou labels (Spearman, top-k selective hit rate). Metrics in `src/polysolv/evaluate.py`, results in `results/hsp_baseline.json`.
   *Done when:* first baseline numbers recorded in D.
-- [ ] **T16 XGBoost baseline** [C] — Morgan FP (2048, polymer trimer trick) + descriptors + T → log wt%; same metrics & splits.
+- [x] **T16 XGBoost baseline** [C] — Morgan FP (2048, polymer trimer trick) + descriptors + T → log wt%; same metrics & splits. Results in `results/xgb_baseline.json`.
   *Done when:* baseline numbers recorded.
 
 ### Phase 3 — Core model
@@ -159,8 +159,8 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T15
-Done: T1–T14 (Phase 1 complete; Phase 2 features T12–T14 done)
+Current task: T17
+Done: T1–T16 (Phase 1 and Phase 2 complete)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
   - Zhou rows after cleaning: 13 732 (981 molecules). Dropped: 1296 Th-copy-of-RT, 748 missing label, 336 duplicate molecule, 0 invalid SMILES
@@ -175,7 +175,9 @@ Key numbers:
   - HSP baseline, test split (99 solvents): Spearman(−χ_prior, y) PS RT 0.68 / Th 0.39, PET RT 0.66 / Th 0.37;
     PS-vs-PET selectivity (χ_prior diff, 69 test solvents, 9 selective, base rate 13 %): top-10 hit 0.30, top-20 0.25, Spearman vs true margin 0.58.
     All solvents (735, 100 selective): top-10 0.10, top-20 0.05 (below base rate 0.14), Spearman margin 0.62
-  - XGBoost baseline: 
+  - XGBoost baseline (seed 42, 4110 features, best iter 2172), test split: MAE 0.32, RMSE 0.51, R² 0.89 (log10 wt%); val R² 0.91.
+    Spearman PS RT 0.79 / Th 0.86, PET RT 0.71 / Th 0.87. R² by polymer: PS 0.79, PET 0.85 (PE 0.96 best, PA66 0.78 worst).
+    Selectivity (same 69 HSP test solvents): top-10 hit 0.40, top-20 0.35, Spearman vs true margin 0.87  (HSP: 0.30 / 0.25 / 0.58)
   - Polysolv stage 1: 
   - Leave-one-polymer-out: 
   - External experimental test: 
@@ -192,13 +194,16 @@ Decisions changed since plan:
   - Solvents without HSP kept with hsp_mask = 0 (B_HSP = 0, chi_prior = A0).
   - T14 done-check changed to a relative one: χ_prior(PS, toluene) = 0.65 > 0.5 with the PS HSP 17.6/6.1/4.1, but this set ranks Zhou PS solvents best (ρ 0.66 vs 0.60 for 18.5/4.5/2.9, 0.28 for the handbook average); the network learns ΔA/ΔB anyway.
   - Descriptor scaler fitted on train solvents only; polymer scaler on all 8 polymers (refit without the held-out polymer for leave-one-polymer-out, T24).
-  - torch 2.14.1+cu130 (RTX 2050, 4 GB) + torch_geometric 2.8.1.
+  - torch 2.14.1+cu130 (RTX 2050, 4 GB) + torch_geometric 2.8.1; xgboost 3.4.1 (native API, no scikit-learn).
+  - Shared metrics live in src/polysolv/evaluate.py (Spearman, MAE/RMSE/R², selectivity top-k); T23 extends it.
+  - XGB features include raw HSP descriptors but NOT chi_prior/Ra² (keeps it a non-physics baseline).
 Open issues:
 1. polymer_props.csv: all rows `verified = no`. Thermal values are typical handbook values (check against Polymer Handbook). HSP for PE/PET/PP/PVC/PA6/PA66 = Hansen handbook averages (accudynetest polytable_02). PS from Materials 2018, 11, 1529 (no R0). EVOH HSP is an estimate (PE/PVOH volume-fraction mix).
-2. The Hansen prior's absolute χ is too high for good PS solvents (toluene 0.65, limonene 0.68; THF 0.48). Its ranking is reasonable at RT (ρ 0.66) but weaker at Th (ρ 0.41) — the learned ΔA/ΔB must fix this; check in T31.
-3. McGowan-based V_s overestimates very large molecules (triolein ~ +14 %); fine for a prior.
-4. RT taken as 298.15 K (assumption, state in report).
-5. exp_test.csv handbook pairs and green_solvents.csv CHEM21 categories are `verified = no` (from memory of the Polymer Handbook / CHEM21 guide). Check before the report. Eucalyptol and alpha-pinene are not in CHEM21 (category by analogy).
-6. GVL is in Zhou only at 25 °C, and p-cymene / Cyrene / alpha-pinene are not in Zhou at all -> screening for them relies purely on model extrapolation.
-7. `zhou_solvent_id` in green_solvents.csv depends on the build order; re-run the flag if cleaning rules change.
+2. Polysolv must beat XGBoost (R² 0.89) to justify the GNN; the physics layer's value may show more in selectivity, temperature extrapolation and leave-one-polymer-out than in test R².
+3. The Hansen prior's absolute χ is too high for good PS solvents (toluene 0.65, limonene 0.68; THF 0.48). Its ranking is reasonable at RT (ρ 0.66) but weaker at Th (ρ 0.41) — the learned ΔA/ΔB must fix this; check in T31.
+4. McGowan-based V_s overestimates very large molecules (triolein ~ +14 %); fine for a prior.
+5. RT taken as 298.15 K (assumption, state in report).
+6. exp_test.csv handbook pairs and green_solvents.csv CHEM21 categories are `verified = no` (from memory of the Polymer Handbook / CHEM21 guide). Check before the report. Eucalyptol and alpha-pinene are not in CHEM21 (category by analogy).
+7. GVL is in Zhou only at 25 °C, and p-cymene / Cyrene / alpha-pinene are not in Zhou at all -> screening for them relies purely on model extrapolation.
+8. `zhou_solvent_id` in green_solvents.csv depends on the build order; re-run the flag if cleaning rules change.
 ```

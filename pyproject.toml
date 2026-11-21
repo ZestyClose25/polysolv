@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# xgboost added later at T16.
+baselines = ["xgboost>=2.0"]
 dev = [
     "pytest>=8.0",
     "jupyter>=1.0",

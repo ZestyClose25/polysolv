@@ -56,6 +56,22 @@ selectivity:              # ground truth for "PS-selective" (same thresholds as 
   pet_max: 0.5            # wt% PET at Th
   min_T_C: 25.0           # Th below ambient is not a process condition
 
+xgb:                      # T16 baseline (Morgan FP + descriptors + T -> log10 wt%)
+  fp_radius: 2
+  fp_bits: 2048
+  trimer_n: 3             # polymer repeat unit joined n times, ends capped with H
+  params:
+    n_estimators: 3000
+    learning_rate: 0.03
+    max_depth: 8
+    min_child_weight: 2
+    subsample: 0.8
+    colsample_bytree: 0.3
+    reg_lambda: 1.0
+    tree_method: hist
+    device: cpu
+  early_stopping_rounds: 200
+
 split:
   fractions: [0.8, 0.1, 0.1]   # train / val / test
   seed: 42
