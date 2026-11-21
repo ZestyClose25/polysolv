@@ -1,0 +1,42 @@
+polymer,solvent,cas,smiles,T_K,wt_pct_exp,label,source,verified,notes
+EVOH,DMF,68-12-2,CN(C)C=O,393.15,27.3,good,Zhou 2023 Table 3,yes,pred 30.8
+EVOH,acetone,67-64-1,CC(C)=O,328.15,0,non,Zhou 2023 Table 3,yes,pred 0.2
+PE,dodecane,112-40-3,CCCCCCCCCCCC,393.15,30.1,good,Zhou 2023 Table 3,yes,pred 32.5; LDPE
+PE,acetone,67-64-1,CC(C)=O,328.15,0,non,Zhou 2023 Table 3,yes,pred 0.3
+PP,tetrahydropyran,142-68-7,C1CCOCC1,360.15,6.4,good,Zhou 2023 Table 3,yes,pred 20.9 (acceptable per paper)
+PP,acetone,67-64-1,CC(C)=O,328.15,0,non,Zhou 2023 Table 3,yes,pred 1.4
+PS,THF,109-99-9,C1CCOC1,298.15,24.4,good,Zhou 2023 Table 3,yes,pred 14.0 (acceptable per paper)
+PS,2-propanol,67-63-0,CC(C)O,355.15,0.01,non,Zhou 2023 Table 3,yes,pred 1.2
+PET,DMF,68-12-2,CN(C)C=O,393.15,0.5,non,Zhou 2023 Table 3,yes,pred 18.4; the one qualitative miss in the paper
+PET,acetone,67-64-1,CC(C)=O,328.15,0.01,non,Zhou 2023 Table 3,yes,pred 0.7
+PVC,tetrahydropyran,142-68-7,C1CCOCC1,360.15,14.7,good,Zhou 2023 Table 3,yes,pred 17.9
+PVC,ethylene glycol,107-21-1,OCCO,395.15,,non,Zhou 2023 Table 3,yes,pred 1.6; measured <0.46
+PA6,DMF,68-12-2,CN(C)C=O,393.15,,good,Zhou 2023 Table 3,yes,pred 7.3; value unavailable (solvent retention)
+PA6,acetone,67-64-1,CC(C)=O,328.15,0.01,non,Zhou 2023 Table 3,yes,pred 0.2
+PA66,DMF,68-12-2,CN(C)C=O,393.15,,good,Zhou 2023 Table 3,yes,pred 4; value unavailable (solvent retention)
+PA66,acetone,67-64-1,CC(C)=O,328.15,0.01,non,Zhou 2023 Table 3,yes,pred 0.1
+PS,toluene,108-88-3,Cc1ccccc1,298.15,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PS,benzene,71-43-2,c1ccccc1,298.15,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PS,chloroform,67-66-3,ClC(Cl)Cl,298.15,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PS,dichloromethane,75-09-2,ClCCl,298.15,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PS,ethyl acetate,141-78-6,CCOC(C)=O,298.15,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PS,butanone,78-93-3,CCC(C)=O,298.15,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PS,ethylbenzene,100-41-4,CCc1ccccc1,298.15,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PS,methanol,67-56-1,CO,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PS,ethanol,64-17-5,CCO,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PS,water,7732-18-5,O,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PS,n-hexane,110-54-3,CCCCCC,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PS,ethylene glycol,107-21-1,OCCO,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,hexafluoro-2-propanol,920-66-1,OC(C(F)(F)F)C(F)(F)F,298.15,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,2-chlorophenol,95-57-8,Oc1ccccc1Cl,298.15,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,trifluoroacetic acid,76-05-1,OC(=O)C(F)(F)F,298.15,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,dichloroacetic acid,79-43-6,OC(=O)C(Cl)Cl,298.15,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,water,7732-18-5,O,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,methanol,67-56-1,CO,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,ethanol,64-17-5,CCO,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,acetone,67-64-1,CC(C)=O,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,toluene,108-88-3,Cc1ccccc1,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,n-hexane,110-54-3,CCCCCC,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,ethyl acetate,141-78-6,CCOC(C)=O,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,chloroform,67-66-3,ClC(Cl)Cl,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,
+PET,THF,109-99-9,C1CCOC1,298.15,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",no,

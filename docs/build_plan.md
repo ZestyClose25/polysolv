@@ -94,9 +94,9 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
   *Done when:* you can describe the file in 3 sentences + have the PS-selective count.
 - [x] **T4 polymer_props.csv** [U] — 8 rows: polymer, repeat_smiles, Tg_K, Tm_K, crystallinity_pct, density, dD, dP, dH, R0, sources.
   *Done when:* all SMILES parse and look right when drawn; every value has a source. (Values still flagged `verified = no` — see open issues.)
-- [ ] **T5 load_zhou.py** [U] + tests [C] — wide → long; RT & Th in K per solvent; `is_miscible` flag.
+- [x] **T5 load_zhou.py** [U] + tests [C] — wide → long; RT & Th in K per solvent; `is_miscible` flag.
   *Done when:* tests pass (row count, PS/PET present, wt% ≥ 0, sane T).
-- [ ] **T6 exp_test.csv** [U] — external experimental test set: Zhou Table 3 (read from the PDF) + Polymer Handbook / Hansen handbook good/non-solvent pairs for PS and PET. Columns: polymer, solvent, CAS, SMILES, T_K, wt% (if measured), label (good/non), source.
+- [x] **T6 exp_test.csv** [U] — external experimental test set: Zhou Table 3 (read from the PDF) + Polymer Handbook / Hansen handbook good/non-solvent pairs for PS and PET. Columns: polymer, solvent, CAS, SMILES, T_K, wt% (if measured), label (good/non), source.
   *Done when:* every row has a source; no row is a Zhou Table 1 calibration point.
 - [ ] **T7 clean.py** [U] — drop NaN per row; drop duplicated Th rows of solvents without bp; `M` → censored at cap; `log10(wt% + 1e-3)`; canonical SMILES; drop invalid; dedupe (same `cosmo_name` → keep one; decide stereoisomers).
   *Done when:* clean tables saved, dropped rows logged.
