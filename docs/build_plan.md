@@ -159,7 +159,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T24
+Current task: T26 (T24 partial: resume LOPO, see Leave-one-polymer-out below)
 Done: T1–T16 (Phase 1 and Phase 2 complete)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
@@ -181,7 +181,14 @@ Key numbers:
   - Polysolv stage 1 (seed 42, 516k params, best epoch 71 of 101, 7.5 min on RTX 2050): test MAE 0.316, RMSE 0.499, R² 0.894 (val R² ~0.93).
     Spearman PS RT 0.83 / Th 0.89, PET RT 0.73 / Th 0.89. Selectivity (69 HSP test solvents): top-10 0.50, top-20 0.40, margin ρ 0.92.
     Sanity: overfits 100 rows (train MSE 4e-6, R² 1.000). Logs: results/training_logs/ (polysolv_stage1.log/_history.csv/_curves.png)
-  - Leave-one-polymer-out: 
+  - Leave-one-polymer-out (T24, PARTIAL — 4 of 8 done, seed 42; table results/lopo.md). Held-out polymer, all its Zhou rows:
+    PS  R² 0.01, MAE 1.05, ρ RT 0.64 / Th 0.78 (Hansen prior ρ 0.66 / 0.41; in-dist. R² 0.86)
+    PET R² 0.12, MAE 0.95, ρ RT 0.34 / Th 0.59 (prior 0.58 / 0.47; in-dist. 0.83)
+    PE  R² 0.40, MAE 0.93, ρ RT 0.89 / Th 0.85 (prior 0.62 / 0.01; in-dist. 0.93)
+    PP  R² −0.29, MAE 1.23, ρ RT 0.69 / Th 0.72 (prior 0.60 / 0.29; in-dist. 0.85)
+    -> ranking of solvents partly transfers (ρ 0.3–0.9, better than the prior at Th), absolute level does not (R² ≈ 0): no polymer generalization claim.
+    MISSING: Polysolv LOPO for PVC, EVOH, PA6, PA66; plain-GIN LOPO for PS and PET (physics-vs-no-physics comparison).
+    Resume: python -m scripts.run_lopo --polymers PVC EVOH PA6 PA66   then   python -m scripts.run_lopo --no-physics --polymers PS PET
   - Stage 2 (T25, w_rank 0.2, RankNet on PS−PET margins of 649 train solvents at Th, 64 per step; 16 min):
     test R² 0.886 (stage 1 0.894); selectivity top-10 0.50 / top-20 0.40 (unchanged), margin ρ 0.93 (0.92); external AUC 0.93 (same),
     Table 3 MAE 1.12 (1.17), ρ 0.84 (0.80). -> changes are within single-seed noise; ensemble members use stage 1 (ensemble.w_rank = 0).

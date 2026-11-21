@@ -21,6 +21,8 @@ python -m baselines.xgb_baseline           # XGBoost baseline  -> results/xgb_ba
 python -m scripts.run_training             # Polysolv stage 1  -> results/polysolv_stage1.json (~8 min on GPU)
 python -m scripts.run_training --no-physics   # plain two-tower GIN baseline -> results/gin_plain.json
 python -m scripts.compare_models           # results/comparison.md (all models, Zhou test + external test)
+python -m scripts.run_lopo                 # leave-one-polymer-out (~16 min per polymer) -> results/lopo.md; resumable with --polymers
+python -m scripts.run_lopo --no-physics --polymers PS PET   # same for the plain GIN
 pytest -q
 ```
 
