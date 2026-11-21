@@ -136,7 +136,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 - [ ] **T24 Leave-one-polymer-out** [U] — train on 7 polymers, predict the 8th (at least PS and PET held out); report honestly.
 - [x] **T25 Stage 2 (optional)** [U] — PS>PET pairwise rank loss; check top-k selectivity changes.
 - [ ] **T26 ensemble.py** [U] — 5 seeds, mean ± σ; calibration plot (error vs σ).
-- [ ] **T27 mass_balance.py** [U] + tests [C] — `required_solvent`, `pet_leaching`, `ps_purity`.
+- [x] **T27 mass_balance.py** [U] + tests [C] — `required_solvent`, `pet_leaching`, `ps_purity`.
   *Done when:* worked example (100 g, 30% PS, S_PS_lower 38, S_PET_upper 0.02, c_max 10) → 270 g solvent, ~0.054 g PET, ~99.8% purity.
 - [ ] **T28 screen.py + run_screening.py** [U] — T grid, rules, score, mass balance → ranked CSV:
   `solvent | T window | S_PS sat | loading | solvent:waste | PS purity | confidence | greenness`.
@@ -192,6 +192,7 @@ Key numbers:
     Hansen 0.74 / 0.78 / 1.59 / 0.18 · XGB 0.88 / 0.80 / 1.22 / 0.80 · plain GIN 0.89 / 0.83 / 1.21 / 0.77 · Polysolv 0.93 / 0.85 / 1.17 / 0.80.
     COSMO-RS itself vs the same 13 measurements: MAE 1.27, ρ 0.78 (ceiling for COSMO-trained models).
     Hansen prior + 3-number head on Zhou test: R² 0.21. Full table: results/comparison.md
+  - Mass balance (T27): worked example 100 g, 30 % PS, S_PS_lower 38, S_PET_upper 0.02, c_max 10 -> c 10 wt%, 270 g solvent (2.7 g/g), 0.054 g PET, 99.82 % purity (tests pass).
 Decisions changed since plan:
   - Kern et al. dropped (data not public). Novelty 2 = external experimental test instead of multi-fidelity. No classification head, no BCE.
   - Package layout: src/polysolv (installed with `pip install -e .`), imports `from polysolv...`.

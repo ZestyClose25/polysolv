@@ -131,3 +131,8 @@ screen:                   # T28 (thresholds ps_min / pet_max come from `selectiv
   min_greenness: 2        # 3 recommended, 2 problematic, 1 hazardous, 0 highly hazardous
   w_green: 2.0            # score = PS_lower - PET_upper + w_green * greenness (wt%)
   conf_sigma: [0.15, 0.30]  # max(sigma_PS, sigma_PET) below -> high / medium, else low; not in Zhou -> one level lower
+
+dissolution:              # T29 order-of-magnitude estimate (not learned)
+  half_thickness_mm: 0.25 # PS flake / foam wall: 0.5 mm thick
+  D0_m2_s: 1.0e-10        # solvent diffusivity in swollen PS (literature range 1e-12 .. 1e-10)
+  dchi_ref: 0.5           # chi margin below chi_star at which D_eff = D0
