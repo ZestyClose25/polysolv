@@ -122,7 +122,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ### Phase 3 — Core model
 - [x] **T17 dataset.py** [U] — PyG Dataset/`collate` returning (polymer graph, solvent graph, descriptors, T, Ra², mask, label, censored).
 - [x] **T18 towers.py** [U] — GIN tower (4×GINEConv, 128, BN, ReLU, dropout 0.1, sum-pool).
-- [ ] **T19 interaction.py + flory_huggins.py + heads.py** [U] — interaction vector, MLP → ΔA, ΔB; χ = A + B/T; regression head.
+- [x] **T19 interaction.py + flory_huggins.py + heads.py** [U] — interaction vector, MLP → ΔA, ΔB; χ = A + B/T; regression head.
   *Done when:* unit test: hand-set A, B give expected χ and monotone outputs.
 - [ ] **T20 polysolv_net.py** [U] — wire everything; forward returns χ, log wt%.
   *Done when:* one batch forward/backward works, shapes correct.
@@ -159,7 +159,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T19
+Current task: T20
 Done: T1–T16 (Phase 1 and Phase 2 complete)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
