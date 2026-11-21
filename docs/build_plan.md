@@ -78,7 +78,7 @@ polysolv/
 ├── notebooks/{01_explore_zhou.ipynb, 02_results.ipynb}
 └── tests/
 ```
-Processed outputs (`python -m scripts.build_dataset`): `solvents.csv`, `polymers.csv`, `zhou_long.csv`, `zhou_dropped.csv`, `splits.json`, `build.log`.
+Processed outputs (`python -m scripts.build_dataset`): `solvents.csv` (+ `V_cm3_mol`), `polymers.csv`, `zhou_long.csv` (+ `hsp_mask, Ra2, B_HSP, chi_prior`), `zhou_dropped.csv`, `splits.json`, `solvent_descriptors.csv`, `polymer_descriptors.csv`, `scalers.json`, `graphs.pt`, `build.log`.
 
 Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 
@@ -159,8 +159,8 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T12
-Done: T1–T11 (Phase 1 complete)
+Current task: T15
+Done: T1–T14 (Phase 1 complete; Phase 2 features T12–T14 done)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
   - Zhou rows after cleaning: 13 732 (981 molecules). Dropped: 1296 Th-copy-of-RT, 748 missing label, 336 duplicate molecule, 0 invalid SMILES
@@ -169,6 +169,9 @@ Key numbers:
   - PS-selective solvents (PS >= 10, PET <= 0.5 wt%): RT 14, Th 104 (Th >= 25 °C)
   - External test set: 16 Zhou Table 3 rows (all 8 polymers) + 25 handbook good/non pairs (PS, PET)
   - Green solvents: 57 (19 recommended, 22 problematic, 10 hazardous, 6 highly hazardous); 54 in Zhou
+  - Graphs: 989 cached (981 solvents + 8 polymers); ATOM_DIM 31, BOND_DIM 6
+  - Molar volume V_s: McGowan Vx -> V = 1.350·Vx − 3.98, mean error ~4 % on 17 anchor solvents
+  - Hansen prior alone vs Zhou PS (RT): Spearman(−χ_prior, y) = 0.66 (Th: 0.41)
   - HSP baseline (Spearman / top-10 hit): 
   - XGBoost baseline: 
   - Polysolv stage 1: 
@@ -183,13 +186,17 @@ Decisions changed since plan:
   - Dedupe: one solvent per canonical SMILES (prefer HSP present, then file order). Applies to Hansen variants AND stereoisomers (the second isomer is dropped).
   - `M` -> censored at 50 wt% (config clean.miscible_cap_wt).
   - Split: acyclic solvents are singleton groups (otherwise 628 acyclic molecules would form one group); balanced scaffold split.
+  - V_s from McGowan volume (calibrated, config descriptors.molar_volume_anchors) because Zhou has no densities.
+  - Solvents without HSP kept with hsp_mask = 0 (B_HSP = 0, chi_prior = A0).
+  - T14 done-check changed to a relative one: χ_prior(PS, toluene) = 0.65 > 0.5 with the PS HSP 17.6/6.1/4.1, but this set ranks Zhou PS solvents best (ρ 0.66 vs 0.60 for 18.5/4.5/2.9, 0.28 for the handbook average); the network learns ΔA/ΔB anyway.
+  - Descriptor scaler fitted on train solvents only; polymer scaler on all 8 polymers (refit without the held-out polymer for leave-one-polymer-out, T24).
+  - torch 2.14.1+cu130 (RTX 2050, 4 GB) + torch_geometric 2.8.1.
 Open issues:
 1. polymer_props.csv: all rows `verified = no`. Thermal values are typical handbook values (check against Polymer Handbook). HSP for PE/PET/PP/PVC/PA6/PA66 = Hansen handbook averages (accudynetest polytable_02). PS from Materials 2018, 11, 1529 (no R0). EVOH HSP is an estimate (PE/PVOH volume-fraction mix).
-2. With the current PS HSP, χ_prior(PS, toluene, 298 K) = 0.63, so the T14 check (< 0.5) fails. Decide in T14: different PS HSP set, different A0, or relax the check.
-3. B_HSP needs solvent molar volume V_s, which Zhou does not provide (no density). Source it for T13/T14 (MW/density, Hansen handbook, or RDKit estimate).
-4. 29 Zhou solvents have no HSP -> no physics prior. Decide in T13/T14: drop, or mask = 0 for those rows.
-5. RT taken as 298.15 K (assumption, state in report).
-6. exp_test.csv handbook pairs and green_solvents.csv CHEM21 categories are `verified = no` (from memory of the Polymer Handbook / CHEM21 guide). Check before the report. Eucalyptol and alpha-pinene are not in CHEM21 (category by analogy).
-7. GVL is in Zhou only at 25 °C, and p-cymene / Cyrene / alpha-pinene are not in Zhou at all -> screening for them relies purely on model extrapolation.
-8. `zhou_solvent_id` in green_solvents.csv depends on the build order; re-run the flag if cleaning rules change.
+2. The Hansen prior's absolute χ is too high for good PS solvents (toluene 0.65, limonene 0.68; THF 0.48). Its ranking is reasonable at RT (ρ 0.66) but weaker at Th (ρ 0.41) — the learned ΔA/ΔB must fix this; check in T31.
+3. McGowan-based V_s overestimates very large molecules (triolein ~ +14 %); fine for a prior.
+4. RT taken as 298.15 K (assumption, state in report).
+5. exp_test.csv handbook pairs and green_solvents.csv CHEM21 categories are `verified = no` (from memory of the Polymer Handbook / CHEM21 guide). Check before the report. Eucalyptol and alpha-pinene are not in CHEM21 (category by analogy).
+6. GVL is in Zhou only at 25 °C, and p-cymene / Cyrene / alpha-pinene are not in Zhou at all -> screening for them relies purely on model extrapolation.
+7. `zhou_solvent_id` in green_solvents.csv depends on the build order; re-run the flag if cleaning rules change.
 ```

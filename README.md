@@ -9,6 +9,7 @@ See `docs/build_plan.md` (tasks + progress log) and `docs/architecture.md`.
 ```powershell
 python -m venv .venv
 .venv\Scripts\activate
+pip install torch --index-url https://download.pytorch.org/whl/cu130   # CUDA build (or plain `pip install torch` for CPU)
 pip install -e .[dev]
 ```
 
