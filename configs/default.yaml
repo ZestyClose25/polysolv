@@ -49,6 +49,13 @@ descriptors:
 physics:
   A0: 0.34               # entropic part of chi (Hansen/Flory-Huggins convention)
 
+selectivity:              # ground truth for "PS-selective" (same thresholds as screening)
+  target: PS
+  other: PET
+  ps_min: 10.0            # wt% PS at Th
+  pet_max: 0.5            # wt% PET at Th
+  min_T_C: 25.0           # Th below ambient is not a process condition
+
 split:
   fractions: [0.8, 0.1, 0.1]   # train / val / test
   seed: 42

@@ -114,7 +114,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 - [x] **T13 descriptors.py** [U] — z-scored solvent (δD, δP, δH, bp, V) & polymer (Tg, Tm, cryst, density + mask) vectors; save scaler.
 - [x] **T14 physics.py** [U] + tests [C] — `ra2()`, `b_hsp()`, `chi_prior()`, `add_prior_columns()` (units: V cm³/mol, δ MPa^½, R = 8.314).
   *Done when:* χ_prior(PS, water) ≫ 0.5; toluene & limonene in the better half and water & methanol in the worst 20 % of PS solvents; Spearman(−χ_prior, Zhou PS RT) > 0.5. (Original absolute check χ_prior(PS, toluene) < 0.5 dropped: 0.65 with the chosen PS HSP.)
-- [ ] **T15 HSP baseline** `hsp_ranking.py` [U] — rank solvents for PS-vs-PET by RED; evaluate vs Zhou labels (Spearman, top-k selective hit rate).
+- [x] **T15 HSP baseline** `hsp_ranking.py` [U] — rank solvents for PS-vs-PET by Hansen distance (Ra², χ_prior; RED not usable: no R0 for PS); evaluate vs Zhou labels (Spearman, top-k selective hit rate). Metrics in `src/polysolv/evaluate.py`, results in `results/hsp_baseline.json`.
   *Done when:* first baseline numbers recorded in D.
 - [ ] **T16 XGBoost baseline** [C] — Morgan FP (2048, polymer trimer trick) + descriptors + T → log wt%; same metrics & splits.
   *Done when:* baseline numbers recorded.
@@ -172,7 +172,9 @@ Key numbers:
   - Graphs: 989 cached (981 solvents + 8 polymers); ATOM_DIM 31, BOND_DIM 6
   - Molar volume V_s: McGowan Vx -> V = 1.350·Vx − 3.98, mean error ~4 % on 17 anchor solvents
   - Hansen prior alone vs Zhou PS (RT): Spearman(−χ_prior, y) = 0.66 (Th: 0.41)
-  - HSP baseline (Spearman / top-10 hit): 
+  - HSP baseline, test split (99 solvents): Spearman(−χ_prior, y) PS RT 0.68 / Th 0.39, PET RT 0.66 / Th 0.37;
+    PS-vs-PET selectivity (χ_prior diff, 69 test solvents, 9 selective, base rate 13 %): top-10 hit 0.30, top-20 0.25, Spearman vs true margin 0.58.
+    All solvents (735, 100 selective): top-10 0.10, top-20 0.05 (below base rate 0.14), Spearman margin 0.62
   - XGBoost baseline: 
   - Polysolv stage 1: 
   - Leave-one-polymer-out: 
