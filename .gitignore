@@ -35,3 +35,6 @@ logs/
 .idea/
 .DS_Store
 Thumbs.db
+
+claude.md
+AGENTS.md
