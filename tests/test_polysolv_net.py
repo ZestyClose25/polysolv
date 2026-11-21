@@ -45,4 +45,4 @@ def test_plain_gin_baseline(cfg, batch_and_ds):
     mcfg = dict(cfg["model"], physics=False)
     model = build_model(dict(cfg, model=mcfg), ds.s_desc_dim, ds.p_desc_dim)
     out = model(b)
-    assert set(out) == {"y_pred"} and out["y_pred"].shape == (128,)
+    assert set(out) == {"raw", "y_pred"} and out["y_pred"].shape == (128,)

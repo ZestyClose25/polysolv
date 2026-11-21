@@ -127,7 +127,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 - [x] **T20 polysolv_net.py** [U] — wire everything; forward returns χ, log wt%.
   *Done when:* one batch forward/backward works, shapes correct.
 - [x] **T21 losses.py** [U] — censored MSE, pairwise rank, physics_reg.
-- [ ] **T22 train.py + configs/default.yaml** [U core, C for logging/ckpt] — Stage 1 on Zhou.
+- [x] **T22 train.py + configs/default.yaml** [U core, C for logging/ckpt] — Stage 1 on Zhou.
   *Done when:* val loss decreases; overfits 100 rows when asked (sanity).
 - [ ] **T23 evaluate.py** [U metrics, C plots] — MAE/RMSE/R²/per-polymer Spearman on Zhou test; external experimental test set; compare with T15–T16.
   *Done when:* table: HSP vs XGB vs Polysolv-stage1 (Zhou test + external test).
@@ -159,7 +159,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T22
+Current task: T23
 Done: T1–T16 (Phase 1 and Phase 2 complete)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
@@ -178,7 +178,9 @@ Key numbers:
   - XGBoost baseline (seed 42, 4110 features, best iter 2172), test split: MAE 0.32, RMSE 0.51, R² 0.89 (log10 wt%); val R² 0.91.
     Spearman PS RT 0.79 / Th 0.86, PET RT 0.71 / Th 0.87. R² by polymer: PS 0.79, PET 0.85 (PE 0.96 best, PA66 0.78 worst).
     Selectivity (same 69 HSP test solvents): top-10 hit 0.40, top-20 0.35, Spearman vs true margin 0.87  (HSP: 0.30 / 0.25 / 0.58)
-  - Polysolv stage 1: 
+  - Polysolv stage 1 (seed 42, 516k params, best epoch 71 of 101, 7.5 min on RTX 2050): test MAE 0.316, RMSE 0.499, R² 0.894 (val R² ~0.93).
+    Spearman PS RT 0.83 / Th 0.89, PET RT 0.73 / Th 0.89. Selectivity (69 HSP test solvents): top-10 0.50, top-20 0.40, margin ρ 0.92.
+    Sanity: overfits 100 rows (train MSE 4e-6, R² 1.000). Logs: results/training_logs/ (polysolv_stage1.log/_history.csv/_curves.png)
   - Leave-one-polymer-out: 
   - External experimental test: 
 Decisions changed since plan:
@@ -195,6 +197,11 @@ Decisions changed since plan:
   - T14 done-check changed to a relative one: χ_prior(PS, toluene) = 0.65 > 0.5 with the PS HSP 17.6/6.1/4.1, but this set ranks Zhou PS solvents best (ρ 0.66 vs 0.60 for 18.5/4.5/2.9, 0.28 for the handbook average); the network learns ΔA/ΔB anyway.
   - Descriptor scaler fitted on train solvents only; polymer scaler on all 8 polymers (refit without the held-out polymer for leave-one-polymer-out, T24).
   - torch 2.14.1+cu130 (RTX 2050, 4 GB) + torch_geometric 2.8.1; xgboost 3.4.1 (native API, no scikit-learn).
+  - Head: y_pred = log10(10**raw + 1e-3) with raw = c0 − softplus(c1)·χ + c2·x_cryst (same floor as the label).
+    Rows with wt% < 1e-3 (12 %) are LEFT-censored in the loss (one-sided, like `M`), on the raw prediction -> no vanishing gradient.
+    Head init: c0, c2 fitted on the Hansen prior, slope = best of a grid (0.5). A fixed steep slope (4) learned much slower (try_slope4.log).
+    v0 (plain linear head, no floor): test R² 0.863 (results/v0_linear_head.json).
+  - Collate batches only the unique graphs per mini-batch; GIN layers have residual connections; interaction last layer zero-init (model starts at prior + head).
   - Shared metrics live in src/polysolv/evaluate.py (Spearman, MAE/RMSE/R², selectivity top-k); T23 extends it.
   - XGB features include raw HSP descriptors but NOT chi_prior/Ra² (keeps it a non-physics baseline).
 Open issues:

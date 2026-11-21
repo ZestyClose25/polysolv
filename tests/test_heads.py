@@ -36,7 +36,15 @@ def test_head_is_monotone_in_chi():
     y = head(c, torch.zeros(20))
     assert torch.all(y[1:] < y[:-1])
     assert head.slope.item() == pytest.approx(2.0)
-    assert head(torch.tensor([0.0]), torch.tensor([1.0])).item() == pytest.approx(0.5)
+    assert head.raw(torch.tensor([0.0]), torch.tensor([1.0])).item() == pytest.approx(0.5)
+
+
+def test_head_floor_matches_label_transform():
+    head = SolubilityHead(c0=1.0, slope=2.0, floor=1e-3)
+    chi_ = torch.tensor([0.0, 10.0])
+    y = head(chi_, torch.zeros(2))
+    assert y[0].item() == pytest.approx(np.log10(10.0 + 1e-3), abs=1e-5)  # raw 1 -> 10 wt%
+    assert y[1].item() == pytest.approx(-3.0, abs=1e-4)                   # raw -19 -> floor
 
 
 def test_inv_softplus():
@@ -46,10 +54,11 @@ def test_inv_softplus():
 
 def test_head_init_from_prior_recovers_line():
     rng = np.random.default_rng(0)
-    c, x = rng.uniform(0, 2, 200), rng.uniform(0, 0.5, 200)
-    y = 1.5 - 2.5 * c - 0.8 * x
-    fit = SolubilityHead().init_from_prior(c, x, y)
-    assert fit["c0"] == pytest.approx(1.5) and fit["slope"] == pytest.approx(2.5) and fit["c2"] == pytest.approx(-0.8)
+    c, x = rng.uniform(0, 1, 300), rng.uniform(0, 0.5, 300)
+    y = np.log10(10 ** (1.5 - 2.5 * c - 0.8 * x) + 1e-3)
+    fit = SolubilityHead().init_from_prior(c, x, y, slope=2.5, steps=1500)
+    assert fit["c0"] == pytest.approx(1.5, abs=0.02) and fit["c2"] == pytest.approx(-0.8, abs=0.05)
+    assert fit["slope"] == 2.5
 
 
 def test_interaction_starts_at_zero():

@@ -8,7 +8,8 @@ same columns). ``collate`` turns a list of row indices into a :class:`PairBatch`
   ``s_index`` / ``p_index`` map every row to its graph in that batch
 - ``s_desc`` / ``p_desc``: z-scored descriptors (+ 0/1 flags) per row
 - ``T`` (K), ``ra2``, ``b_hsp`` (K), ``mask`` (Hansen prior available), ``cryst`` (fraction)
-- ``y`` (log10 wt%), ``censored`` ('M' rows: true value ≥ y), ``row`` (index into the table)
+- ``y`` (log10 wt%), ``censored`` ('M' rows: true value ≥ y), ``floored`` (wt% below the
+  floor: true value ≤ y), ``row`` (index into the table)
 """
 
 from __future__ import annotations
@@ -44,6 +45,7 @@ class PairBatch:
     cryst: torch.Tensor
     y: torch.Tensor
     censored: torch.Tensor
+    floored: torch.Tensor
     row: torch.Tensor
 
     def to(self, device) -> "PairBatch":
@@ -78,11 +80,12 @@ class PairDataset(Dataset):
     """Rows of a label table with everything the model needs, stored as tensors.
 
     ``labels`` needs ``solvent_id, polymer, T_K, Ra2, B_HSP, hsp_mask``; ``y`` and
-    ``censored`` are optional (missing -> 0 / False, e.g. for screening).
+    ``censored`` are optional (missing -> 0 / False, e.g. for screening). Rows with
+    ``wt_pct < floor_wt`` are flagged ``floored`` (left-censored in the loss).
     """
 
     def __init__(self, labels: pd.DataFrame, solvents: pd.DataFrame, polymers: pd.DataFrame,
-                 s_desc: pd.DataFrame, p_desc: pd.DataFrame, graphs: GraphCache) -> None:
+                 s_desc: pd.DataFrame, p_desc: pd.DataFrame, graphs: GraphCache, floor_wt: float = 1e-3) -> None:
         self.labels = labels.reset_index(drop=True)
         lab = self.labels
         s_smiles = solvents.set_index("solvent_id")["can_smiles"]
@@ -110,6 +113,8 @@ class PairDataset(Dataset):
         self.y = f(lab["y"]) if "y" in lab else torch.zeros(len(lab))
         cens = lab["censored"].astype(bool) if "censored" in lab else np.zeros(len(lab), bool)
         self.censored = torch.tensor(np.asarray(cens), dtype=torch.bool)
+        flo = (lab["wt_pct"] < floor_wt).to_numpy() if "wt_pct" in lab else np.zeros(len(lab), bool)
+        self.floored = torch.tensor(flo & ~np.asarray(cens), dtype=torch.bool)
 
     @property
     def s_desc_dim(self) -> int:
@@ -137,7 +142,7 @@ class PairDataset(Dataset):
             p_index=p_inv,
             s_desc=self.s_desc[idx], p_desc=self.p_desc[idx], T=self.T[idx], ra2=self.ra2[idx],
             b_hsp=self.b_hsp[idx], mask=self.mask[idx], cryst=self.cryst[idx], y=self.y[idx],
-            censored=self.censored[idx], row=idx,
+            censored=self.censored[idx], floored=self.floored[idx], row=idx,
         )
 
     def loader(self, batch_size: int, shuffle: bool, seed: int | None = None) -> DataLoader:
@@ -148,3 +153,14 @@ class PairDataset(Dataset):
     def subset_rows(self, rows) -> PairBatch:
         """Collate an explicit set of rows (e.g. the rank mini-batch)."""
         return self.collate(list(rows))
+
+
+def split_datasets(proc: dict, polymers: list[str] | None = None, p_desc: pd.DataFrame | None = None,
+                   parts=("train", "val", "test")) -> dict[str, PairDataset]:
+    """PairDatasets for the solvent-scaffold split, optionally restricted to ``polymers``."""
+    lab = proc["labels"]
+    if polymers is not None:
+        lab = lab[lab.polymer.isin(polymers)]
+    pd_ = proc["p_desc"] if p_desc is None else p_desc
+    return {k: PairDataset(lab[lab.solvent_id.isin(proc["splits"][k])], proc["solvents"], proc["polymers"],
+                           proc["s_desc"], pd_, proc["graphs"]) for k in parts}

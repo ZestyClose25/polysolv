@@ -54,3 +54,21 @@ def test_hsp_baseline_runs(cfg):
     t = r["test"]
     assert t["spearman_neg_chi_prior"]["PS/RT"] > 0.5
     assert t["selectivity_chi_diff"]["n_selective"] > 0
+
+
+def test_auc():
+    from polysolv.evaluate import auc
+    assert auc([3, 2, 1, 0], [True, True, False, False]) == 1.0
+    assert auc([0, 1, 2, 3], [True, True, False, False]) == 0.0
+    assert auc([1, 1], [True, False]) == 0.5
+    assert np.isnan(auc([1, 2], [True, True]))
+
+
+def test_external_metrics():
+    from polysolv.evaluate import external_metrics
+    df = pd.DataFrame({"y_pred": [1.5, 1.0, -2.0, -2.5], "wt_pct_exp": [30.0, 10.0, 0.01, np.nan],
+                       "label": ["good", "good", "non", "non"],
+                       "source": ["Zhou 2023 Table 3"] * 3 + ["Polymer Handbook"]})
+    m = external_metrics(df)
+    assert m["all"]["AUC"] == 1.0 and m["all"]["accuracy"] == 1.0
+    assert m["zhou_table3"]["measured_n"] == 3 and m["handbook"]["n"] == 1

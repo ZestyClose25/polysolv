@@ -86,6 +86,7 @@ model:                    # T18-T20 physics-informed two-tower GIN
   ra2_scale: 100.0        # Ra2 (MPa) / scale -> interaction input
   dB_scale: 300.0         # K; dB = dB_scale * network output (last layer starts at 0 -> model starts at the Hansen prior)
   physics: true           # false = plain two-tower GIN baseline (MLP -> log10 wt% directly, 1000/T as input)
+  head_slope_grid: [0.25, 0.5, 0.8, 1.0, 1.5, 2.0, 3.0, 4.0]  # head init: slope with the lowest prior MSE on train (c0, c2 fitted); all stay learnable
 
 loss:                     # T21
   w_mse: 1.0              # censored MSE on log10 wt%
@@ -105,3 +106,28 @@ train:                    # T22
   device: cuda            # falls back to cpu if CUDA is not available
   checkpoint_dir: checkpoints
   log_dir: results/training_logs
+
+external:                 # T23 experimental test set (data/external/exp_test.csv), never trained on
+  good_min_wt: 1.0        # predicted wt% >= this counts as "good solvent" for the accuracy metric
+
+mass_balance:             # T27
+  load_factor: 0.8        # run at 80 % of the conservative PS saturation
+  c_max_wt: 10.0          # viscosity cap on the PS concentration (wt%)
+
+lopo:                     # T24 leave-one-polymer-out
+  polymers: [PS, PET, PE, PP, PVC, EVOH, PA6, PA66]
+
+ensemble:                 # T26 deep ensemble
+  seeds: [42, 43, 44, 45, 46]
+  w_rank: 0.0             # rank-loss weight of the members (set from the T25 result)
+  calib_bins: 10          # quantile bins of sigma for the calibration plot
+
+screen:                   # T28 (thresholds ps_min / pet_max come from `selectivity`)
+  T_min_C: 25.0
+  T_step_C: 5.0
+  bp_margin_C: 10.0       # grid stops at bp - margin
+  T_max_C: 120.0          # Zhou's highest temperature (Th cap); hotter = untrained extrapolation, not screened
+  k_sigma: 1.0            # PS_lower = mean - k*sigma, PET_upper = mean + k*sigma (log10 wt%)
+  min_greenness: 2        # 3 recommended, 2 problematic, 1 hazardous, 0 highly hazardous
+  w_green: 2.0            # score = PS_lower - PET_upper + w_green * greenness (wt%)
+  conf_sigma: [0.15, 0.30]  # max(sigma_PS, sigma_PET) below -> high / medium, else low; not in Zhou -> one level lower

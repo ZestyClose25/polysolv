@@ -1,0 +1,73 @@
+18:03:30 run polysolv_stage1 | seed 42 | device cuda | physics True | params 516237
+18:03:30 rows: train 11010, val 1379 | polymers EVOH,PA6,PA66,PE,PET,PP,PS,PVC
+18:03:30 model {'hidden': 128, 'gin_layers': 4, 'dropout': 0.1, 'interaction_hidden': [256, 128], 'ra2_scale': 100.0, 'dB_scale': 300.0, 'physics': True}
+18:03:30 loss {'w_mse': 1.0, 'w_rank': 0.0, 'w_phys': 0.001, 'rank_solvents': 64} | train {'epochs': 200, 'batch_size': 256, 'lr': 0.001, 'weight_decay': 1e-05, 'patience': 30, 'lr_factor': 0.5, 'lr_patience': 10, 'grad_clip': 5.0, 'device': 'cuda'}
+18:03:30 head init from Hansen prior: c0 0.344, slope 0.397, c2 -2.039
+18:03:32 epoch   0 | val mse 1.9079 R2 0.164 (start = Hansen prior + fitted head)
+18:03:48 epoch   1 | train 1.4375 (mse 1.3153 phys 122.1981) | val mse 0.8943 MAE 0.785 R2 0.608 | lr 1.0e-03 | 16.0s *
+18:03:57 epoch   2 | train 1.0022 (mse 0.7828 phys 219.3910) | val mse 0.8452 MAE 0.734 R2 0.630 | lr 1.0e-03 | 9.4s *
+18:04:03 epoch   3 | train 0.9733 (mse 0.7885 phys 184.7850) | val mse 0.7316 MAE 0.697 R2 0.680 | lr 1.0e-03 | 6.1s *
+18:04:12 epoch   4 | train 0.8777 (mse 0.6636 phys 214.1609) | val mse 0.7468 MAE 0.696 R2 0.673 | lr 1.0e-03 | 9.0s
+18:04:19 epoch   5 | train 0.8364 (mse 0.6180 phys 218.4479) | val mse 0.7332 MAE 0.666 R2 0.679 | lr 1.0e-03 | 6.1s
+18:04:25 epoch   6 | train 0.8493 (mse 0.6334 phys 215.8934) | val mse 0.5385 MAE 0.567 R2 0.764 | lr 1.0e-03 | 6.3s *
+18:04:32 epoch   7 | train 0.7532 (mse 0.5328 phys 220.4403) | val mse 0.6290 MAE 0.585 R2 0.724 | lr 1.0e-03 | 6.7s
+18:04:44 epoch   8 | train 0.7240 (mse 0.4949 phys 229.1306) | val mse 0.4751 MAE 0.515 R2 0.792 | lr 1.0e-03 | 12.3s *
+18:04:50 epoch   9 | train 0.6823 (mse 0.4642 phys 218.0606) | val mse 0.5756 MAE 0.594 R2 0.748 | lr 1.0e-03 | 6.4s
+18:04:57 epoch  10 | train 0.6747 (mse 0.4639 phys 210.8584) | val mse 0.4454 MAE 0.529 R2 0.805 | lr 1.0e-03 | 6.2s *
+18:05:03 epoch  11 | train 0.6267 (mse 0.4067 phys 219.9670) | val mse 0.5471 MAE 0.539 R2 0.760 | lr 1.0e-03 | 6.5s
+18:05:10 epoch  12 | train 0.6215 (mse 0.4180 phys 203.4902) | val mse 0.4223 MAE 0.476 R2 0.815 | lr 1.0e-03 | 6.6s *
+18:05:16 epoch  13 | train 0.5752 (mse 0.3725 phys 202.6945) | val mse 0.4123 MAE 0.479 R2 0.819 | lr 1.0e-03 | 6.6s *
+18:05:25 epoch  14 | train 0.5673 (mse 0.3622 phys 205.1492) | val mse 0.3588 MAE 0.452 R2 0.843 | lr 1.0e-03 | 8.4s *
+18:05:31 epoch  15 | train 0.5469 (mse 0.3514 phys 195.4395) | val mse 0.3136 MAE 0.412 R2 0.863 | lr 1.0e-03 | 6.4s *
+18:05:38 epoch  16 | train 0.5606 (mse 0.3664 phys 194.1718) | val mse 0.3198 MAE 0.417 R2 0.860 | lr 1.0e-03 | 6.4s
+18:05:44 epoch  17 | train 0.5037 (mse 0.3130 phys 190.7587) | val mse 0.4706 MAE 0.512 R2 0.794 | lr 1.0e-03 | 6.6s
+18:05:51 epoch  18 | train 0.5125 (mse 0.3340 phys 178.5068) | val mse 0.4364 MAE 0.460 R2 0.809 | lr 1.0e-03 | 6.6s
+18:05:59 epoch  19 | train 0.5128 (mse 0.3372 phys 175.6585) | val mse 0.3698 MAE 0.468 R2 0.838 | lr 1.0e-03 | 8.4s
+18:06:06 epoch  20 | train 0.4856 (mse 0.3070 phys 178.5665) | val mse 0.3451 MAE 0.432 R2 0.849 | lr 1.0e-03 | 7.0s
+18:06:13 epoch  21 | train 0.4808 (mse 0.3029 phys 177.9149) | val mse 0.4256 MAE 0.455 R2 0.814 | lr 1.0e-03 | 6.7s
+18:06:20 epoch  22 | train 0.4605 (mse 0.2849 phys 175.6539) | val mse 0.4520 MAE 0.498 R2 0.802 | lr 1.0e-03 | 6.6s
+18:06:26 epoch  23 | train 0.4625 (mse 0.2947 phys 167.8602) | val mse 0.3927 MAE 0.424 R2 0.828 | lr 1.0e-03 | 5.9s
+18:06:32 epoch  24 | train 0.4605 (mse 0.2915 phys 169.0195) | val mse 0.4113 MAE 0.462 R2 0.820 | lr 1.0e-03 | 6.4s
+18:06:36 epoch  25 | train 0.4323 (mse 0.2705 phys 161.7528) | val mse 0.4125 MAE 0.446 R2 0.819 | lr 1.0e-03 | 4.1s
+18:06:40 epoch  26 | train 0.4518 (mse 0.2932 phys 158.6216) | val mse 0.4044 MAE 0.430 R2 0.823 | lr 5.0e-04 | 3.9s
+18:06:44 epoch  27 | train 0.3874 (mse 0.2259 phys 161.4889) | val mse 0.4125 MAE 0.426 R2 0.819 | lr 5.0e-04 | 4.0s
+18:06:48 epoch  28 | train 0.3939 (mse 0.2404 phys 153.4342) | val mse 0.3437 MAE 0.388 R2 0.849 | lr 5.0e-04 | 3.8s
+18:06:52 epoch  29 | train 0.3607 (mse 0.2038 phys 156.9315) | val mse 0.3549 MAE 0.409 R2 0.845 | lr 5.0e-04 | 3.9s
+18:06:56 epoch  30 | train 0.3587 (mse 0.2056 phys 153.0942) | val mse 0.3955 MAE 0.409 R2 0.827 | lr 5.0e-04 | 4.4s
+18:07:01 epoch  31 | train 0.3662 (mse 0.2118 phys 154.3873) | val mse 0.3113 MAE 0.389 R2 0.864 | lr 5.0e-04 | 4.6s *
+18:07:05 epoch  32 | train 0.3433 (mse 0.1902 phys 153.1189) | val mse 0.3234 MAE 0.366 R2 0.858 | lr 5.0e-04 | 4.2s
+18:07:09 epoch  33 | train 0.3461 (mse 0.1984 phys 147.6580) | val mse 0.3591 MAE 0.395 R2 0.843 | lr 5.0e-04 | 4.2s
+18:07:13 epoch  34 | train 0.3466 (mse 0.1977 phys 148.8406) | val mse 0.3981 MAE 0.418 R2 0.826 | lr 5.0e-04 | 3.7s
+18:07:18 epoch  35 | train 0.3383 (mse 0.1949 phys 143.4718) | val mse 0.2807 MAE 0.370 R2 0.877 | lr 5.0e-04 | 4.7s *
+18:07:24 epoch  36 | train 0.3251 (mse 0.1824 phys 142.7010) | val mse 0.4158 MAE 0.432 R2 0.818 | lr 5.0e-04 | 5.9s
+18:07:30 epoch  37 | train 0.3299 (mse 0.1883 phys 141.5659) | val mse 0.3083 MAE 0.371 R2 0.865 | lr 5.0e-04 | 6.6s
+18:07:35 epoch  38 | train 0.3183 (mse 0.1840 phys 134.3203) | val mse 0.3839 MAE 0.396 R2 0.832 | lr 5.0e-04 | 4.4s
+18:07:38 epoch  39 | train 0.3137 (mse 0.1765 phys 137.2214) | val mse 0.3606 MAE 0.392 R2 0.842 | lr 5.0e-04 | 3.9s
+18:07:42 epoch  40 | train 0.3226 (mse 0.1859 phys 136.6866) | val mse 0.3404 MAE 0.354 R2 0.851 | lr 5.0e-04 | 3.9s
+18:07:49 epoch  41 | train 0.3139 (mse 0.1819 phys 132.0161) | val mse 0.3155 MAE 0.372 R2 0.862 | lr 5.0e-04 | 6.4s
+18:07:53 epoch  42 | train 0.3129 (mse 0.1778 phys 135.0571) | val mse 0.3304 MAE 0.368 R2 0.855 | lr 5.0e-04 | 4.5s
+18:07:59 epoch  43 | train 0.3005 (mse 0.1688 phys 131.7103) | val mse 0.3042 MAE 0.369 R2 0.867 | lr 5.0e-04 | 5.3s
+18:08:03 epoch  44 | train 0.3104 (mse 0.1791 phys 131.3796) | val mse 0.3418 MAE 0.387 R2 0.850 | lr 5.0e-04 | 4.1s
+18:08:07 epoch  45 | train 0.2982 (mse 0.1686 phys 129.6096) | val mse 0.4293 MAE 0.450 R2 0.812 | lr 5.0e-04 | 4.5s
+18:08:11 epoch  46 | train 0.3057 (mse 0.1799 phys 125.8438) | val mse 0.3997 MAE 0.411 R2 0.825 | lr 2.5e-04 | 4.0s
+18:08:15 epoch  47 | train 0.2737 (mse 0.1491 phys 124.5657) | val mse 0.3412 MAE 0.378 R2 0.851 | lr 2.5e-04 | 4.3s
+18:08:19 epoch  48 | train 0.2630 (mse 0.1364 phys 126.6427) | val mse 0.3315 MAE 0.357 R2 0.855 | lr 2.5e-04 | 3.9s
+18:08:23 epoch  49 | train 0.2552 (mse 0.1320 phys 123.2174) | val mse 0.3532 MAE 0.365 R2 0.845 | lr 2.5e-04 | 3.9s
+18:08:27 epoch  50 | train 0.2584 (mse 0.1354 phys 122.9779) | val mse 0.3659 MAE 0.373 R2 0.840 | lr 2.5e-04 | 4.0s
+18:08:31 epoch  51 | train 0.2515 (mse 0.1292 phys 122.2705) | val mse 0.3354 MAE 0.346 R2 0.853 | lr 2.5e-04 | 3.9s
+18:08:35 epoch  52 | train 0.2608 (mse 0.1391 phys 121.7452) | val mse 0.3189 MAE 0.354 R2 0.860 | lr 2.5e-04 | 4.1s
+18:08:42 epoch  53 | train 0.2529 (mse 0.1318 phys 121.0723) | val mse 0.3206 MAE 0.374 R2 0.860 | lr 2.5e-04 | 6.6s
+18:08:47 epoch  54 | train 0.2513 (mse 0.1315 phys 119.8498) | val mse 0.3090 MAE 0.345 R2 0.865 | lr 2.5e-04 | 5.2s
+18:08:55 epoch  55 | train 0.2455 (mse 0.1260 phys 119.4784) | val mse 0.3669 MAE 0.376 R2 0.839 | lr 2.5e-04 | 8.1s
+18:09:04 epoch  56 | train 0.2429 (mse 0.1267 phys 116.1541) | val mse 0.3597 MAE 0.341 R2 0.842 | lr 2.5e-04 | 9.3s
+18:09:12 epoch  57 | train 0.2437 (mse 0.1274 phys 116.2766) | val mse 0.4453 MAE 0.355 R2 0.805 | lr 1.3e-04 | 7.4s
+18:09:21 epoch  58 | train 0.2337 (mse 0.1182 phys 115.4668) | val mse 0.3441 MAE 0.344 R2 0.849 | lr 1.3e-04 | 9.1s
+18:09:27 epoch  59 | train 0.2300 (mse 0.1143 phys 115.7128) | val mse 0.2928 MAE 0.330 R2 0.872 | lr 1.3e-04 | 6.4s
+18:09:37 epoch  60 | train 0.2262 (mse 0.1101 phys 116.0523) | val mse 0.3432 MAE 0.337 R2 0.850 | lr 1.3e-04 | 9.8s
+18:09:47 epoch  61 | train 0.2264 (mse 0.1120 phys 114.3882) | val mse 0.3287 MAE 0.337 R2 0.856 | lr 1.3e-04 | 10.3s
+18:09:57 epoch  62 | train 0.2258 (mse 0.1121 phys 113.6440) | val mse 0.3456 MAE 0.337 R2 0.849 | lr 1.3e-04 | 9.3s
+18:10:08 epoch  63 | train 0.2240 (mse 0.1096 phys 114.3763) | val mse 0.3760 MAE 0.345 R2 0.835 | lr 1.3e-04 | 11.8s
+18:10:23 epoch  64 | train 0.2217 (mse 0.1081 phys 113.6059) | val mse 0.3474 MAE 0.347 R2 0.848 | lr 1.3e-04 | 14.5s
+18:10:36 epoch  65 | train 0.2225 (mse 0.1098 phys 112.6588) | val mse 0.3448 MAE 0.346 R2 0.849 | lr 1.3e-04 | 12.8s
+18:10:36 early stop: no val improvement for 30 epochs
+18:10:36 best epoch 35 | val mse 0.2807 | 7.1 min

@@ -54,3 +54,9 @@ def test_loader_covers_all_rows(ds):
 def test_ps_is_amorphous(ds):
     ps = ds.labels.index[ds.labels.polymer == "PS"][0]
     assert ds.cryst[ps] == 0.0
+
+
+def test_floored_flag(ds):
+    fl = ds.floored.numpy()
+    assert fl.any()
+    assert (ds.labels.wt_pct[fl] < 1e-3).all()

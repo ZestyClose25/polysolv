@@ -67,3 +67,45 @@ def selectivity_metrics(score: pd.Series, sel: pd.DataFrame, ks=(10, 20)) -> dic
     out["n_selective"] = int(sel["selective"].sum())
     out["base_rate"] = float(sel["selective"].mean())
     return out
+
+
+def auc(score, positive) -> float:
+    """ROC AUC via the Mann-Whitney statistic (ties count 1/2). NaN if one class is empty."""
+    s = pd.Series(np.asarray(score, dtype=float))
+    pos = np.asarray(positive, dtype=bool)
+    n_pos, n_neg = int(pos.sum()), int((~pos).sum())
+    if n_pos == 0 or n_neg == 0:
+        return float("nan")
+    r = s.rank().to_numpy()
+    return float((r[pos].sum() - n_pos * (n_pos + 1) / 2) / (n_pos * n_neg))
+
+
+def external_metrics(df: pd.DataFrame, score_col: str = "y_pred", good_min_wt: float = 1.0,
+                     floor: float = 1e-3, wt_score: bool = True) -> dict:
+    """Metrics on the experimental test set (``exp_test.csv`` rows with a prediction column).
+
+    - measured wt% rows: MAE / Spearman of predicted vs log10(wt_exp + floor)
+    - good / non rows:  AUC (score ranks good above non) and, if ``wt_score``, accuracy of
+      "predicted wt% >= good_min_wt"  <=>  good
+    Reported for all rows and per source (Zhou Table 3 vs handbook pairs).
+    """
+    def block(d: pd.DataFrame) -> dict:
+        out = {"n": int(len(d))}
+        m = d.wt_pct_exp.notna()
+        if m.sum() >= 3:
+            y_exp = np.log10(d.wt_pct_exp[m].astype(float) + floor)
+            out["measured_n"] = int(m.sum())
+            out["measured_MAE"] = float(np.abs(d[score_col][m] - y_exp).mean()) if wt_score else float("nan")
+            out["measured_spearman"] = spearman(d[score_col][m], y_exp)
+        good = d.label == "good"
+        out["n_good"], out["n_non"] = int(good.sum()), int((~good).sum())
+        out["AUC"] = auc(d[score_col], good)
+        if wt_score:
+            pred_good = d[score_col] >= np.log10(good_min_wt + floor)
+            out["accuracy"] = float((pred_good == good).mean())
+        return out
+
+    res = {"all": block(df)}
+    for src, g in df.groupby(df.source.str.startswith("Zhou").map({True: "zhou_table3", False: "handbook"})):
+        res[src] = block(g)
+    return res

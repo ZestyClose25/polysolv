@@ -35,3 +35,10 @@ def test_total_loss_weights():
     out = {"y_pred": torch.ones(2), "dA": torch.ones(2), "dB": torch.zeros(2)}
     parts = total_loss(out, B, {"w_mse": 1.0, "w_phys": 0.5, "w_rank": 2.0}, 300.0, rank=torch.tensor(0.25))
     assert parts["total"].item() == pytest.approx(1.0 + 0.5 + 0.5)
+
+
+def test_floored_rows_are_one_sided():
+    y = torch.tensor([-3.0, -3.0])
+    fl = torch.tensor([True, True])
+    cens = torch.tensor([False, False])
+    assert censored_mse(torch.tensor([-8.0, -2.0]), y, cens, fl).item() == pytest.approx((0 + 1.0) / 2)

@@ -1,0 +1,18 @@
+18:16:01 run try_slope1 | seed 42 | device cuda | physics True | params 516237
+18:16:01 rows: train 11010, val 1379 | polymers EVOH,PA6,PA66,PE,PET,PP,PS,PVC
+18:16:01 model {'hidden': 128, 'gin_layers': 4, 'dropout': 0.1, 'interaction_hidden': [256, 128], 'ra2_scale': 100.0, 'dB_scale': 300.0, 'physics': True, 'head_slope_init': 1.0}
+18:16:01 loss {'w_mse': 1.0, 'w_rank': 0.0, 'w_phys': 0.01, 'rank_solvents': 64} | train {'epochs': 200, 'batch_size': 256, 'lr': 0.001, 'weight_decay': 1e-05, 'patience': 30, 'lr_factor': 0.5, 'lr_patience': 10, 'grad_clip': 5.0, 'device': 'cuda'}
+18:16:01 head init on Hansen prior: c0 0.949, slope 1.000 (fixed at init), c2 -1.873, prior MSE 1.863
+18:16:01 epoch   0 | val mse 1.9710 R2 0.205 (start = Hansen prior + fitted head)
+18:16:09 epoch   1 | train 1.5523 (mse 1.4028 phys 14.9491) | val mse 0.9685 MAE 0.752 R2 0.601 | lr 1.0e-03 | 7.5s *
+18:16:15 epoch   2 | train 1.2572 (mse 1.0220 phys 23.5162) | val mse 1.0288 MAE 0.722 R2 0.582 | lr 1.0e-03 | 6.1s
+18:16:25 epoch   3 | train 1.1766 (mse 0.9709 phys 20.5624) | val mse 0.8301 MAE 0.746 R2 0.638 | lr 1.0e-03 | 10.0s *
+18:16:32 epoch   4 | train 1.1048 (mse 0.8946 phys 21.0177) | val mse 0.6925 MAE 0.667 R2 0.693 | lr 1.0e-03 | 6.6s *
+18:16:38 epoch   5 | train 1.0855 (mse 0.8661 phys 21.9435) | val mse 0.7480 MAE 0.713 R2 0.676 | lr 1.0e-03 | 5.9s
+18:16:47 epoch   6 | train 1.0665 (mse 0.8639 phys 20.2622) | val mse 0.7464 MAE 0.681 R2 0.685 | lr 1.0e-03 | 9.9s
+18:16:54 epoch   7 | train 1.0778 (mse 0.8619 phys 21.5909) | val mse 0.7213 MAE 0.651 R2 0.693 | lr 1.0e-03 | 6.4s
+18:17:05 epoch   8 | train 1.0175 (mse 0.8103 phys 20.7175) | val mse 0.7243 MAE 0.701 R2 0.678 | lr 1.0e-03 | 10.7s
+18:17:22 epoch   9 | train 0.9961 (mse 0.7982 phys 19.7861) | val mse 0.7302 MAE 0.674 R2 0.687 | lr 1.0e-03 | 17.5s
+18:17:29 epoch  10 | train 0.9560 (mse 0.7503 phys 20.5696) | val mse 0.6459 MAE 0.656 R2 0.715 | lr 1.0e-03 | 6.7s *
+18:17:44 epoch  11 | train 0.9344 (mse 0.7241 phys 21.0284) | val mse 0.7446 MAE 0.655 R2 0.684 | lr 1.0e-03 | 14.9s
+18:17:54 epoch  12 | train 0.9440 (mse 0.7436 phys 20.0329) | val mse 0.7465 MAE 0.674 R2 0.692 | lr 1.0e-03 | 10.4s
