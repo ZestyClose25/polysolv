@@ -64,9 +64,10 @@ purity  = m·f_PS/(m·f_PS + m_PET)
 ```
 polysolv/
 ├── CLAUDE.md  README.md  pyproject.toml  .gitignore
-├── configs/default.yaml
+├── configs/default.yaml           all paths, seeds, cleaning + split settings
 ├── data/raw/  data/external/{polymer_props.csv, green_solvents.csv, exp_test.csv}  data/processed/
-├── src/polysolv/
+├── src/polysolv/                  package (`pip install -e .`; imports `from polysolv.data.clean import ...`)
+│   ├── config.py                  load_config(), REPO_ROOT
 │   ├── data/{load_zhou.py, clean.py, merge.py, splits.py}
 │   ├── features/{graph.py, descriptors.py, physics.py}
 │   ├── dataset.py
@@ -77,7 +78,7 @@ polysolv/
 ├── notebooks/{01_explore_zhou.ipynb, 02_results.ipynb}
 └── tests/
 ```
-⚠️ Layout conflict to resolve before T5: CLAUDE.md says `src/` is the package root (`from src.data ...`), but the repo and this plan use `src/polysolv/`.
+Processed outputs (`python -m scripts.build_dataset`): `solvents.csv`, `polymers.csv`, `zhou_long.csv`, `zhou_dropped.csv`, `splits.json`, `build.log`.
 
 Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 
@@ -158,12 +159,16 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T5
-Done: T1, T2, T3, T4
+Current task: T12
+Done: T1–T11 (Phase 1 complete)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
-  - Zhou rows after cleaning: 
+  - Zhou rows after cleaning: 13 732 (981 molecules). Dropped: 1296 Th-copy-of-RT, 748 missing label, 336 duplicate molecule, 0 invalid SMILES
+  - Solvent descriptors: 157 solvents without bp (RT rows only), 29 without HSP
+  - Split (seed 42): train 784 / val 98 / test 99 solvents; 744 scaffold groups (benzene scaffold = 162 solvents, always in train)
   - PS-selective solvents (PS >= 10, PET <= 0.5 wt%): RT 14, Th 104 (Th >= 25 °C)
+  - External test set: 16 Zhou Table 3 rows (all 8 polymers) + 25 handbook good/non pairs (PS, PET)
+  - Green solvents: 57 (19 recommended, 22 problematic, 10 hazardous, 6 highly hazardous); 54 in Zhou
   - HSP baseline (Spearman / top-10 hit): 
   - XGBoost baseline: 
   - Polysolv stage 1: 
@@ -171,19 +176,20 @@ Key numbers:
   - External experimental test: 
 Decisions changed since plan:
   - Kern et al. dropped (data not public). Novelty 2 = external experimental test instead of multi-fidelity. No classification head, no BCE.
+  - Package layout: src/polysolv (installed with `pip install -e .`), imports `from polysolv...`.
   - Polymer short names everywhere: EVOH, PE, PET, PP, PS, PVC, PA6, PA66.
   - polymer_props.csv also has R0 (needed for RED in T15) and separate thermal/HSP source columns + `verified` flag.
+  - Cleaning: Th rows of solvents without bp dropped (Th = 25 °C copy of RT); sub-ambient Th rows kept (down to 110.65 K, methane).
+  - Dedupe: one solvent per canonical SMILES (prefer HSP present, then file order). Applies to Hansen variants AND stereoisomers (the second isomer is dropped).
+  - `M` -> censored at 50 wt% (config clean.miscible_cap_wt).
+  - Split: acyclic solvents are singleton groups (otherwise 628 acyclic molecules would form one group); balanced scaffold split.
 Open issues:
-1. 162 solvents have no bp, and their "Th" is just 25 °C, an exact copy of the RT values. They have only one real temperature. GVL is one of them, so the "GVL rejected at high T" check in T28 can't be tested against Zhou. In T7, drop those duplicate Th rows.
-2. There are duplicate molecules of two kinds:
-   - Hansen-handbook variants of the same compound. They have identical labels, so keep one.
-   - cis/trans isomers. The SMILES carry no stereo, so the graphs are identical, but the labels can differ a lot (crotonaldehyde 38 vs 3.4 wt%).
-     For T7 you need to decide how to handle the isomers. For T9, all rows of one molecule must go into the same split.
-3. External test set: use only Table 3 of the paper (14 measured values). The Table 1 values were used to calibrate COSMO-RS, so they aren't independent. Read Table 3 in the PDF itself, because text extraction garbles it.
-4. polymer_props.csv: all rows `verified = no`. Thermal values are typical handbook values (check against Polymer Handbook). HSP for PE/PET/PP/PVC/PA6/PA66 = Hansen handbook averages (accudynetest polytable_02). PS from Materials 2018, 11, 1529 (no R0). EVOH HSP is an estimate (PE/PVOH volume-fraction mix).
-5. With the current PS HSP, χ_prior(PS, toluene, 298 K) = 0.63, so the T14 check (< 0.5) fails. Decide in T14: different PS HSP set, different A0, or relax the check.
-6. B_HSP needs solvent molar volume V_s, which Zhou does not provide (no density). Source it for T13/T14 (MW/density, Hansen handbook, or RDKit estimate).
-7. 29 Zhou solvents have no HSP → no physics prior. Decide: drop, or mask = 0.
-8. RT taken as 298.15 K (assumption, state in report).
-9. Package layout conflict: CLAUDE.md `src/` vs repo `src/polysolv/`. Resolve before T5.
+1. polymer_props.csv: all rows `verified = no`. Thermal values are typical handbook values (check against Polymer Handbook). HSP for PE/PET/PP/PVC/PA6/PA66 = Hansen handbook averages (accudynetest polytable_02). PS from Materials 2018, 11, 1529 (no R0). EVOH HSP is an estimate (PE/PVOH volume-fraction mix).
+2. With the current PS HSP, χ_prior(PS, toluene, 298 K) = 0.63, so the T14 check (< 0.5) fails. Decide in T14: different PS HSP set, different A0, or relax the check.
+3. B_HSP needs solvent molar volume V_s, which Zhou does not provide (no density). Source it for T13/T14 (MW/density, Hansen handbook, or RDKit estimate).
+4. 29 Zhou solvents have no HSP -> no physics prior. Decide in T13/T14: drop, or mask = 0 for those rows.
+5. RT taken as 298.15 K (assumption, state in report).
+6. exp_test.csv handbook pairs and green_solvents.csv CHEM21 categories are `verified = no` (from memory of the Polymer Handbook / CHEM21 guide). Check before the report. Eucalyptol and alpha-pinene are not in CHEM21 (category by analogy).
+7. GVL is in Zhou only at 25 °C, and p-cymene / Cyrene / alpha-pinene are not in Zhou at all -> screening for them relies purely on model extrapolation.
+8. `zhou_solvent_id` in green_solvents.csv depends on the build order; re-run the flag if cleaning rules change.
 ```
