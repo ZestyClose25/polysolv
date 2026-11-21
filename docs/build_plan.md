@@ -104,7 +104,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
   *Done when:* no unexplained missing descriptors for Zhou rows.
 - [x] **T9 splits.py** [U] — scaffold split (Zhou), grouped by canonical SMILES → `splits.json`; fixed seed.
   *Done when:* zero solvent overlap between Zhou train/test.
-- [ ] **T10 build_dataset.py** [C] — one command runs T5→T9.
+- [x] **T10 build_dataset.py** [C] — one command runs T5→T9.
 - [ ] **T11 green_solvents.csv** [U] (parallel, any time before T27) — 50–200 green solvents with CAS + CHEM21/GSK category; flag which are already in Zhou.
 
 ### Phase 2 — Features & physics baseline
