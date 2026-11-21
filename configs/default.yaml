@@ -1,0 +1,28 @@
+# Polysolv — all tunable values and paths. Paths are relative to the repo root.
+seed: 42
+
+paths:
+  zhou_xlsx: data/raw/zhou2023/d3gc00404j1_suppl.xlsx
+  polymer_props: data/external/polymer_props.csv
+  green_solvents: data/external/green_solvents.csv
+  exp_test: data/external/exp_test.csv
+  processed_dir: data/processed
+
+zhou:
+  sheet_main: All solubility predictions
+  sheet_info: Solvent Info
+  rt_K: 298.15            # paper does not state RT exactly (assumption)
+  polymer_rename:         # spreadsheet name -> short name used everywhere
+    Nylon 6: PA6
+    Nylon 66: PA66
+
+clean:
+  log_floor_wt: 1.0e-3    # target = log10(wt% + floor)
+  miscible_cap_wt: 50.0   # 'M' -> censored label: true value >= cap (max numeric in Zhou ~52 wt%)
+  dedupe: first           # one row per canonical SMILES; keep the first solvent in file order
+
+split:
+  fractions: [0.8, 0.1, 0.1]   # train / val / test
+  seed: 42
+  # Ring solvents grouped by Bemis–Murcko scaffold; acyclic solvents are their own group.
+  big_group_frac: 0.5          # groups larger than this fraction of the test size always go to train
