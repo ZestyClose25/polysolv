@@ -31,6 +31,14 @@ FIG_DIR = RES / "figures"
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
 GREY, INK, INK2 = "#b5b3ad", "#0b0b0b", "#52514e"
 POLYSOLV_NAMES = ("Polysolv stage 1", "Polysolv 5-seed ensemble", "Polysolv (full)")
+MODEL_LABEL = "Solubility predictor"  # display name of the physics-informed model in all figures
+ABLATION_LABELS = {"polymer_descriptors": "− polymer descriptors",
+                   "interaction_features": "− pair features (h_p⊙h_s, |h_p−h_s|)",
+                   "dummy_atom": "ring-closure graph instead of * dummy"}
+
+
+def _display(name: str) -> str:
+    return name.replace("Polysolv", MODEL_LABEL)
 
 plt.rcParams.update({
     "figure.dpi": 110, "savefig.dpi": 200, "font.size": 9,
@@ -82,10 +90,11 @@ def fig_model_comparison() -> plt.Figure | None:
         print("skip model comparison: results/comparison.json missing")
         return None
     t = pd.DataFrame(comp).T
+    t.index = [_display(m) for m in t.index]
     fig = _hbar_panels(
         t, {"R2": "Zhou test R² (log10 wt%)", "sel_rho_margin": "PS–PET margin ρ (test, Th)",
             "ext_AUC": "External AUC good vs non"},
-        "Model comparison (seed 42; ensemble = seeds 42–46)", lambda m: m.startswith("Polysolv"))
+        "Model comparison (seed 42; ensemble = seeds 42–46)", lambda m: m.startswith(MODEL_LABEL))
     _save(fig, "fig_model_comparison.png")
     return fig
 
@@ -99,7 +108,7 @@ def _run_row(d: dict) -> dict:
 
 def fig_ablations() -> plt.Figure | None:
     """Full Polysolv vs each available ablation run (one change each)."""
-    runs = {"Polysolv (full)": "polysolv_stage1.json",
+    runs = {"Full model": "polysolv_stage1.json",
             "− physics layer (plain GIN)": "gin_plain.json",
             "− floored head (linear head, v0)": "v0_linear_head.json"}
     rows = {}
@@ -109,14 +118,15 @@ def fig_ablations() -> plt.Figure | None:
             rows[label] = _run_row(d)
     for p in sorted(RES.glob("ablation_*.json")):
         d = json.loads(p.read_text(encoding="utf-8"))
-        rows["− " + p.stem.removeprefix("ablation_").replace("_", " ")] = _run_row(d)
+        key = p.stem.removeprefix("ablation_")
+        rows[ABLATION_LABELS.get(key, "− " + key.replace("_", " "))] = _run_row(d)
     if len(rows) < 2:
         print("skip ablations: fewer than two runs found")
         return None
     t = pd.DataFrame(rows).T
     fig = _hbar_panels(
         t, {"R2": "Zhou test R²", "sel_rho_margin": "PS–PET margin ρ", "ext_AUC": "External AUC"},
-        "Ablations (seed 42; blank = metric not recorded for that run)", lambda m: m == "Polysolv (full)")
+        "Ablations (seed 42; blank = metric not recorded for that run)", lambda m: m == "Full model")
     _save(fig, "fig_ablations.png")
     return fig
 
@@ -140,7 +150,7 @@ def fig_parity() -> plt.Figure | None:
     ax.set_xlim(lim)
     ax.set_ylim(lim)
     ax.set_xlabel("Zhou COSMO-RS label, log10 wt%")
-    ax.set_ylabel("Polysolv ensemble prediction, log10 wt%")
+    ax.set_ylabel("ensemble prediction, log10 wt%")
     ax.set_title("Zhou test split (99 unseen solvents)", loc="left", fontsize=10)
     ax.legend(frameon=False, loc="upper left")
     fig.tight_layout()
@@ -157,7 +167,7 @@ def fig_lopo() -> plt.Figure | None:
     plain = _load("lopo_plain.json") or {}
     pols = list(lopo)
     x = np.arange(len(pols))
-    series = [("Polysolv", BLUE, [lopo[p]["all_solvents"]["spearman"]["Th"] for p in pols])]
+    series = [(MODEL_LABEL, BLUE, [lopo[p]["all_solvents"]["spearman"]["Th"] for p in pols])]
     if plain:
         series.append(("Plain GIN", AQUA,
                        [plain.get(p, {}).get("all_solvents", {}).get("spearman", {}).get("Th", np.nan) for p in pols]))
@@ -239,7 +249,62 @@ def fig_calibration() -> plt.Figure | None:
     return fig
 
 
-ALL_FIGURES = (fig_model_comparison, fig_ablations, fig_parity, fig_lopo, fig_screening, fig_calibration)
+CHI_SOLVENTS = {  # grid name -> panel title (two passing, one rejected for PET leaching, one non-solvent)
+    "cyclopentyl methyl ether": "CPME (rank 1)",
+    "d-limonene": "d-limonene (rank 11)",
+    "N,N-dimethylformamide": "DMF (rejected: PET)",
+    "methanol": "methanol (rejected: PS)",
+}
+
+
+def fig_chi_T() -> plt.Figure | None:
+    """T31: ensemble chi(T) vs Hansen prior (top) and solubility vs T with thresholds (bottom)."""
+    gp = RES / "screening_PS_PET_all_solvents_grid.csv"
+    proc = REPO_ROOT / "data" / "processed" / "zhou_long.csv"
+    if not gp.exists() or not proc.exists():
+        print("skip chi(T): screening grid or zhou_long.csv missing")
+        return None
+    grid, lab = pd.read_csv(gp), pd.read_csv(proc)
+    names = [n for n in CHI_SOLVENTS if n in set(grid.name)]
+    fig, axes = plt.subplots(2, len(names), figsize=(2.6 * len(names), 5.0), sharex="col", sharey="row")
+    colors = {"PS": BLUE, "PET": ORANGE}
+    for k, name in enumerate(names):
+        g = grid[grid.name == name].sort_values("T_C")
+        sid = int(g.solvent_id.iloc[0])
+        ax, bx = axes[0, k], axes[1, k]
+        for pol, c in colors.items():
+            ax.plot(g.T_C, g[f"chi_{pol}"], color=c, lw=2, label=f"{pol} learned χ")
+            row = lab[(lab.solvent_id == sid) & (lab.polymer == pol)]
+            if len(row) and row.hsp_mask.iloc[0] == 1:
+                b = row.B_HSP.iloc[0]
+                ax.plot(g.T_C, 0.34 + b / (g.T_C + 273.15), color=c, lw=1.2, ls="--", label=f"{pol} Hansen prior")
+            bx.plot(g.T_C, g[f"S_{pol}_mean"], color=c, lw=2, label=f"{pol} predicted")
+            band_lo = g.S_PS_lower if pol == "PS" else g.S_PET_mean
+            band_hi = g.S_PS_mean if pol == "PS" else g.S_PET_upper
+            bx.fill_between(g.T_C, band_lo, band_hi, color=c, alpha=0.18, lw=0)
+            pts = row[row.T_K - 273.15 >= 20]
+            bx.plot(pts.T_K - 273.15, pts.wt_pct.clip(lower=1e-3), ls="none", marker="o", ms=6, mfc="white",
+                    mec=c, mew=1.6, label=f"{pol} COSMO-RS label")
+        bx.axhline(10, color=INK2, lw=0.9, ls=":")
+        bx.axhline(0.5, color=INK2, lw=0.9, ls=":")
+        bx.set_yscale("log")
+        ax.set_title(CHI_SOLVENTS[name], loc="left", fontsize=9)
+        bx.set_xlabel("T (°C)")
+    axes[1, 0].text(axes[1, 0].get_xlim()[0], 10, " PS ≥ 10", va="bottom", fontsize=7, color=INK2)
+    axes[1, 0].text(axes[1, 0].get_xlim()[0], 0.5, " PET ≤ 0.5", va="bottom", fontsize=7, color=INK2)
+    axes[0, 0].set_ylabel("χ (effective)")
+    axes[1, 0].set_ylabel("saturation solubility (wt%)")
+    h0, l0 = axes[0, 0].get_legend_handles_labels()
+    h1, l1 = axes[1, 0].get_legend_handles_labels()
+    fig.legend(h0 + h1, l0 + l1, loc="lower center", ncol=4, frameon=False, fontsize=7.5, bbox_to_anchor=(0.5, -0.07))
+    fig.suptitle("Learned χ(T) vs Hansen prior, and the resulting solubility window (5-seed ensemble)",
+                 x=0.01, ha="left", fontsize=10)
+    fig.tight_layout()
+    _save(fig, "fig_chi_T.png")
+    return fig
+
+
+ALL_FIGURES = (fig_model_comparison, fig_ablations, fig_parity, fig_lopo, fig_screening, fig_calibration, fig_chi_T)
 
 
 def main() -> None:

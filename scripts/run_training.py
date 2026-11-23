@@ -5,6 +5,9 @@ Usage:
     python -m scripts.run_training --no-physics            # plain two-tower GIN baseline ('gin_plain')
     python -m scripts.run_training --w-rank 0.5            # stage 2 (T25) with the PS>PET rank loss
     python -m scripts.run_training --overfit 100           # sanity: memorise 100 training rows
+    python -m scripts.run_training --run-name ablation_polymer_descriptors --no-polymer-desc    # T30 ablations
+    python -m scripts.run_training --run-name ablation_interaction_features --no-pair-features
+    python -m scripts.run_training --run-name ablation_dummy_atom --polymer-graph ring
 
 Writes results/<run>.json, results/<run>_{test,external}_predictions.csv,
 results/training_logs/<run>.{log,_history.csv,_curves.png}, checkpoints/<run>.pt
@@ -20,6 +23,7 @@ import pandas as pd
 
 from polysolv.config import DEFAULT_CONFIG, REPO_ROOT, load_config
 from polysolv.dataset import PairDataset, load_processed, split_datasets
+from polysolv.features.graph import use_ring_closure
 from polysolv.evaluate import (external_metrics, per_group_spearman, regression_metrics, selectivity_frame,
                                selectivity_metrics)
 from polysolv.inference import external_rows, predict_rows
@@ -78,11 +82,23 @@ def main(argv=None) -> dict:
     ap.add_argument("--w-rank", type=float, default=None)
     ap.add_argument("--epochs", type=int, default=None)
     ap.add_argument("--overfit", type=int, default=None)
+    ap.add_argument("--no-pair-features", action="store_true", help="T30 ablation: drop h_p*h_s, |h_p-h_s|")
+    ap.add_argument("--no-polymer-desc", action="store_true", help="T30 ablation: zero the polymer descriptors")
+    ap.add_argument("--polymer-graph", choices=["dummy", "ring"], default=None,
+                    help="T30 ablation: '*' dummy atoms (default) or ring-closure polymer graphs")
     a = ap.parse_args(argv)
 
     cfg = load_config(a.config)
+    if a.no_pair_features:
+        cfg["model"]["pair_features"] = False
+    if a.no_polymer_desc:
+        cfg["model"]["polymer_descriptors"] = False
+    if a.polymer_graph:
+        cfg["model"]["polymer_graph"] = a.polymer_graph
     seed = cfg["seed"] if a.seed is None else a.seed
     proc = load_processed(cfg["paths"]["processed_dir"])
+    if cfg["model"].get("polymer_graph", "dummy") == "ring":
+        use_ring_closure(proc["graphs"], proc["polymers"]["can_smiles"])
     if a.overfit:
         info = overfit_run(cfg, proc, a.overfit, seed)
         print(json.dumps(info, indent=1))

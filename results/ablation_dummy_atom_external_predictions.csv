@@ -1,0 +1,42 @@
+solvent_id,polymer,T_K,T_label,hsp_mask,Ra2,B_HSP,chi_prior,solvent,smiles,wt_pct_exp,label,source,in_zhou,y_pred,chi,chi_std
+461,EVOH,393.15,ext,1,25.519999999999957,63.95510416417332,0.5026735448662681,DMF,CN(C)C=O,27.3,good,Zhou 2023 Table 3,True,1.3017342,-0.4961419,0.0
+237,EVOH,328.15,ext,1,20.66,43.40555940346019,0.47227353162718333,acetone,CC(C)=O,0.0,non,Zhou 2023 Table 3,True,-0.76417506,0.9120507,0.0
+484,PE,393.15,ext,1,31.440000000000005,225.8956358833254,0.9145787508160383,dodecane,CCCCCCCCCCCC,30.1,good,Zhou 2023 Table 3,True,1.3521672,-0.6766691,0.0
+237,PE,328.15,ext,1,60.56000000000002,127.23333385641577,0.7277291904812304,acetone,CC(C)=O,0.0,non,Zhou 2023 Table 3,True,-0.6096992,0.6601753,0.0
+874,PP,360.15,ext,1,41.36000000000001,123.19470132615943,0.6820649766101887,tetrahydropyran,C1CCOCC1,6.4,good,Zhou 2023 Table 3,True,1.1761594,-0.6299305,0.0
+237,PP,328.15,ext,1,109.24999999999999,229.52843004975918,1.0394619230527478,acetone,CC(C)=O,0.0,non,Zhou 2023 Table 3,True,0.049821466,0.13713169,0.0
+871,PS,298.15,ext,1,17.930000000000007,43.15072774714727,0.48472825003235714,THF,C1CCOC1,24.4,good,Zhou 2023 Table 3,True,1.1090441,0.1467179,0.0
+176,PS,355.15,ext,1,164.24999999999997,373.7512327653447,1.3923757081946917,2-propanol,CC(C)O,0.01,non,Zhou 2023 Table 3,True,-0.079020895,0.9558921,0.0
+461,PET,393.15,ext,1,82.68,207.20250831872488,0.8670316884617193,DMF,CN(C)C=O,0.5,non,Zhou 2023 Table 3,True,0.6522531,-0.053919792,0.0
+237,PET,328.15,ext,1,57.859999999999985,121.56077769042622,0.7104427173256933,acetone,CC(C)=O,0.01,non,Zhou 2023 Table 3,True,-0.23581259,0.5511246,0.0
+874,PVC,360.15,ext,1,7.410000000000009,22.07139112250586,0.4012838848327249,tetrahydropyran,C1CCOCC1,14.7,good,Zhou 2023 Table 3,True,1.2577708,-0.027638197,0.0
+532,PVC,395.15,ext,1,400.5799999999999,777.8530973552855,2.308500815779541,ethylene glycol,OCCO,,non,Zhou 2023 Table 3,True,0.101315096,0.75990224,0.0
+461,PA6,393.15,ext,1,107.21999999999997,268.701656288506,1.023458365225756,DMF,CN(C)C=O,,good,Zhou 2023 Table 3,True,0.4333398,0.09516096,0.0
+237,PA6,328.15,ext,1,70.96,149.0831798291159,0.7943141241173729,acetone,CC(C)=O,0.01,non,Zhou 2023 Table 3,True,-0.93420994,1.0286407,0.0
+461,PA66,393.15,ext,1,41.639999999999986,104.35307748417635,0.605428150792767,DMF,CN(C)C=O,,good,Zhou 2023 Table 3,True,0.07476744,0.26632404,0.0
+237,PA66,328.15,ext,1,102.05999999999999,214.42262307440203,0.9934286852792993,acetone,CC(C)=O,0.01,non,Zhou 2023 Table 3,True,-1.1540879,1.1069341,0.0
+893,PS,298.15,ext,1,27.139999999999986,91.2063466150452,0.6459075854940306,toluene,Cc1ccccc1,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,0.5958002,0.4961896,0.0
+283,PS,298.15,ext,1,44.17999999999997,123.20096708048588,0.7532180683564846,benzene,c1ccccc1,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,0.7424994,0.39629436,0.0
+348,PS,298.15,ext,1,11.719999999999999,27.939178310674354,0.43370846322547163,chloroform,ClC(Cl)Cl,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,0.493247,0.5660285,0.0
+702,PS,298.15,ext,1,11.880000000000006,22.417736015613293,0.4151894550246966,dichloromethane,ClCCl,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,0.82821083,0.33793187,0.0
+495,PS,298.15,ext,1,23.21000000000001,67.56915556598399,0.5666280582457958,ethyl acetate,CCOC(C)=O,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,0.79604846,0.35983157,0.0
+671,PS,298.15,ext,1,19.65000000000002,52.52288358408317,0.5161626147378272,butanone,CCC(C)=O,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,0.911537,0.28119516,0.0
+501,PS,298.15,ext,1,37.699999999999996,148.25755440316678,0.8372582740337642,ethylbenzene,CCc1ccccc1,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,0.2874627,0.70618534,0.0
+654,PS,298.15,ext,1,403.32000000000016,456.3787892633231,1.870701959628788,methanol,CO,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-2.1837857,2.437461,0.0
+493,PS,298.15,ext,1,254.33999999999997,433.2754697557504,1.793213046304714,ethanol,CCO,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-1.738861,2.102234,0.0
+942,PS,298.15,ext,1,1574.8899999999999,881.2793244045196,3.295825337596913,water,O,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-2.9987836,4.681593,0.0
+594,PS,298.15,ext,1,83.18000000000002,312.18571605119797,1.3870760223082275,n-hexane,CCCCCC,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-0.686729,1.3707097,0.0
+532,PS,298.15,ext,1,505.05999999999995,980.7341488598046,3.6293984533282058,ethylene glycol,OCCO,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-2.8080704,3.1178656,0.0
+587,PET,298.15,ext,1,76.23999999999998,206.35221670605188,1.0321087261648563,hexafluoro-2-propanol,OC(C(F)(F)F)C(F)(F)F,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-0.43669376,0.6881857,0.0
+146,PET,298.15,ext,1,52.84,186.19635646095367,0.964505639647673,2-chlorophenol,Oc1ccccc1Cl,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-0.9057141,1.0090778,0.0
+911,PET,298.15,ext,1,72.08999999999999,142.94130219867822,0.819427476769003,trifluoroacetic acid,OC(=O)C(F)(F)F,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-1.6867108,1.5531293,0.0
+415,PET,298.15,ext,1,34.48999999999999,95.22723127879274,0.6593936987381948,dichloroacetic acid,OC(=O)C(Cl)Cl,,good,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,0.9217159,-0.23740232,0.0
+942,PET,298.15,ext,1,1402.4099999999996,784.7627055465093,2.9721070117273496,water,O,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-2.9972446,3.9276867,0.0
+654,PET,298.15,ext,1,343.36000000000007,388.5307474993915,1.6431385124916704,methanol,CO,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-2.8068774,2.6039305,0.0
+493,PET,298.15,ext,1,201.17999999999995,342.7158882026494,1.4894747214578214,ethanol,CCO,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-2.7593977,2.521435,0.0
+237,PET,298.15,ext,1,57.859999999999985,121.56077769042622,0.7477168461862359,acetone,CC(C)=O,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-0.99875826,1.0729966,0.0
+893,PET,298.15,ext,1,48.06,161.50983855265568,0.8817066528682063,toluene,Cc1ccccc1,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-2.1881719,1.9293218,0.0
+594,PET,298.15,ext,1,142.33999999999997,534.2211447791237,2.1317864993430278,n-hexane,CCCCCC,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-2.9427466,3.011886,0.0
+495,PET,298.15,ext,1,34.889999999999965,101.572074006772,0.6806744055233004,ethyl acetate,CCOC(C)=O,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-1.8364171,1.661334,0.0
+348,PET,298.15,ext,1,14.479999999999988,34.518711769502076,0.4557763265789102,chloroform,ClC(Cl)Cl,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-0.44625324,0.6947119,0.0
+871,PET,298.15,ext,1,16.489999999999977,39.68519244564737,0.47310478767616093,THF,C1CCOC1,,non,"Polymer Handbook 4th ed., Solvents and non-solvents for polymers",True,-1.3050964,1.2846208,0.0

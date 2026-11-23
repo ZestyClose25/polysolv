@@ -87,6 +87,10 @@ model:                    # T18-T20 physics-informed two-tower GIN
   dB_scale: 300.0         # K; dB = dB_scale * network output (last layer starts at 0 -> model starts at the Hansen prior)
   physics: true           # false = plain two-tower GIN baseline (MLP -> log10 wt% directly, 1000/T as input)
   head_slope_grid: [0.25, 0.5, 0.8, 1.0, 1.5, 2.0, 3.0, 4.0]  # head init: slope with the lowest prior MSE on train (c0, c2 fitted); all stay learnable
+  # T30 ablation switches (defaults = full model)
+  pair_features: true        # false: interaction vector without h_p*h_s and |h_p - h_s|
+  polymer_descriptors: true  # false: polymer descriptor vector zeroed (head crystallinity term kept)
+  polymer_graph: dummy       # dummy: '*' dummy atoms; ring: '*' removed, the two attachment atoms bonded (periodic graph)
 
 loss:                     # T21
   w_mse: 1.0              # censored MSE on log10 wt%

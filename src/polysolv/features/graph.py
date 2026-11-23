@@ -81,6 +81,38 @@ def smiles_to_graph(smiles: str) -> Data:
     return Data(x=x, edge_index=edge_index, edge_attr=edge_attr, smiles=smiles)
 
 
+def ring_closure_graph(smiles: str) -> Data:
+    """Repeat unit as a periodic graph (T30 ablation): '*' atoms removed, attachment atoms joined.
+
+    Atom features are computed on the original molecule, so the attachment atoms keep their
+    in-chain degree and H count. The closing bond is single, non-conjugated and flagged in-ring.
+    If both '*' sit on bonded atoms (e.g. PE, PS) the closing edge duplicates that bond.
+    """
+    g = smiles_to_graph(smiles)
+    mol = Chem.MolFromSmiles(smiles)
+    dummies = [a.GetIdx() for a in mol.GetAtoms() if a.GetAtomicNum() == 0]
+    if len(dummies) != 2:
+        raise ValueError(f"expected two '*' atoms: {smiles}")
+    ends = [mol.GetAtomWithIdx(d).GetNeighbors()[0].GetIdx() for d in dummies]
+    keep = [i for i in range(mol.GetNumAtoms()) if i not in dummies]
+    new_id = {old: new for new, old in enumerate(keep)}
+    src, dst = g.edge_index
+    ok = torch.tensor([s.item() in new_id and d.item() in new_id for s, d in zip(src, dst)], dtype=torch.bool)
+    remap = lambda t: torch.tensor([new_id[i] for i in t.tolist()], dtype=torch.long)  # noqa: E731
+    i, j = new_id[ends[0]], new_id[ends[1]]
+    close = torch.tensor([[1.0, 0.0, 0.0, 0.0, 0.0, 1.0]] * 2)
+    edge_index = torch.cat([torch.stack([remap(src[ok]), remap(dst[ok])]), torch.tensor([[i, j], [j, i]])], dim=1)
+    edge_attr = torch.cat([g.edge_attr[ok], close])
+    return Data(x=g.x[keep], edge_index=edge_index, edge_attr=edge_attr, smiles=smiles)
+
+
+def use_ring_closure(cache: "GraphCache", polymer_smiles) -> None:
+    """Replace the cached '*' graphs of these polymers by ring-closure graphs (in memory only)."""
+    for s in polymer_smiles:
+        key = canonical_smiles(s)
+        cache._graphs[key] = ring_closure_graph(key)
+
+
 class GraphCache:
     """Graphs keyed by canonical SMILES, built once and reused."""
 

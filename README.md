@@ -26,6 +26,7 @@ python -m scripts.run_lopo --no-physics --polymers PS PET   # same for the plain
 python -m scripts.run_ensemble             # 5-seed deep ensemble (~1 h) -> results/polysolv_ensemble.json, ensemble_calibration.png
 python -m scripts.run_screening --target PS --other PET --waste-mass 100 --ps-fraction 0.3   # -> results/screening_PS_PET.csv
 python -m scripts.run_screening --min-greenness 0 --tag _all_solvents                        # sanity check incl. DMF
+python -m scripts.app                      # interactive console UI: screen solvents, evaluate any solvent (name/CAS/SMILES), model info
 pytest -q
 ```
 

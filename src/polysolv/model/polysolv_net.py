@@ -30,6 +30,8 @@ class PolysolvNet(nn.Module):
         super().__init__()
         h, n, dr = mcfg["hidden"], mcfg["gin_layers"], mcfg["dropout"]
         self.physics = bool(mcfg.get("physics", True))
+        self.pair = bool(mcfg.get("pair_features", True))
+        self.use_p_desc = bool(mcfg.get("polymer_descriptors", True))
         self.floor = floor
         self.ra2_scale = float(mcfg["ra2_scale"])
         self.dB_scale = float(mcfg["dB_scale"])
@@ -37,21 +39,24 @@ class PolysolvNet(nn.Module):
         self.enc_s = MoleculeEncoder(ATOM_DIM, BOND_DIM, s_desc_dim, h, n, dr)
         layers = tuple(mcfg["interaction_hidden"])
         if self.physics:
-            self.interaction = InteractionMLP(h, n_extra=2, layers=layers, dropout=dr, n_out=2, zero_init=True)
+            self.interaction = InteractionMLP(h, n_extra=2, layers=layers, dropout=dr, n_out=2, zero_init=True,
+                                              pair=self.pair)
             self.fh = FloryHuggins(A0)
             self.head = SolubilityHead(floor=floor)
             self.slope_grid = tuple(mcfg.get("head_slope_grid", (1.0,)))
         else:
-            self.interaction = InteractionMLP(h, n_extra=1, layers=layers, dropout=dr, n_out=1, zero_init=False)
+            self.interaction = InteractionMLP(h, n_extra=1, layers=layers, dropout=dr, n_out=1, zero_init=False,
+                                              pair=self.pair)
 
     def forward(self, b: PairBatch) -> dict[str, torch.Tensor]:
-        h_p = self.enc_p(b.p_graph, b.p_index, b.p_desc)
+        p_desc = b.p_desc if self.use_p_desc else torch.zeros_like(b.p_desc)
+        h_p = self.enc_p(b.p_graph, b.p_index, p_desc)
         h_s = self.enc_s(b.s_graph, b.s_index, b.s_desc)
         if not self.physics:
-            x = interaction_vector(h_p, h_s, 1000.0 / b.T)
+            x = interaction_vector(h_p, h_s, 1000.0 / b.T, pair=self.pair)
             raw = self.interaction(x).squeeze(-1)
             return {"raw": raw, "y_pred": floor_log10(raw, self.floor)}
-        x = interaction_vector(h_p, h_s, b.ra2 / self.ra2_scale, b.mask)
+        x = interaction_vector(h_p, h_s, b.ra2 / self.ra2_scale, b.mask, pair=self.pair)
         out = self.interaction(x)
         dA, dB = out[:, 0], self.dB_scale * out[:, 1]
         chi, A, B = self.fh(dA, dB, b.b_hsp, b.mask, b.T)
