@@ -133,7 +133,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
   *Done when:* table: HSP vs XGB vs Polysolv-stage1 (Zhou test + external test).
 
 ### Phase 4 — Generalization, ensemble, screening
-- [ ] **T24 Leave-one-polymer-out** [U] — train on 7 polymers, predict the 8th (at least PS and PET held out); report honestly.
+- [x] **T24 Leave-one-polymer-out** [U] — train on 7 polymers, predict the 8th (at least PS and PET held out); report honestly.
 - [x] **T25 Stage 2 (optional)** [U] — PS>PET pairwise rank loss; check top-k selectivity changes.
 - [x] **T26 ensemble.py** [U] — 5 seeds, mean ± σ; calibration plot (error vs σ).
 - [x] **T27 mass_balance.py** [U] + tests [C] — `required_solvent`, `pet_leaching`, `ps_purity`.
@@ -146,7 +146,7 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ### Phase 5 — Experiments for the report
 - [ ] **T30 Ablations** [U run, C plotting] — −physics layer, −polymer descriptors, −interaction features, +σ-profiles (opt.), `*` dummy vs ring-closure.
 - [ ] **T31 Interpretability** [U] — plot predicted χ(T) for PS & PET in top solvents; compare χ with HSP prior; list functional-group trends.
-- [ ] **T32 Results notebook** [C] — `02_results.ipynb`: all tables & figures.
+- [x] **T32 Results notebook** [C] — `02_results.ipynb`: all tables & figures.
 
 ### Phase 6 — Validation & write-up
 - [ ] **T33 Lab validation (if access)** [U] — top-3 solvents on PS cups + PET bottle flakes; gravimetric dissolution; PS purity (FTIR/DSC); PET loss; compare with predictions.
@@ -159,8 +159,8 @@ Legend below: **[U]** = user writes, **[C]** = fine to let Claude generate.
 ## D. Progress log (update and paste into new chats)
 
 ```
-Current task: T30 (T24 partial: resume LOPO first, see Leave-one-polymer-out below)
-Done: T1–T23, T25–T29 (Phases 1–3 complete; Phase 4 except T24, which is partial)
+Current task: T30 (plotting done: scripts/make_figures.py; remaining ablation RUNS need model/featurization switches) and T31
+Done: T1–T29, T32 (Phases 1–4 complete; T30 plotting part done)
 Key numbers:
   - Zhou raw: 1007 solvents (983 unique molecules), 16 112 long rows before cleaning, 2 `M` labels, 100 % SMILES parse
   - Zhou rows after cleaning: 13 732 (981 molecules). Dropped: 1296 Th-copy-of-RT, 748 missing label, 336 duplicate molecule, 0 invalid SMILES
@@ -181,14 +181,20 @@ Key numbers:
   - Polysolv stage 1 (seed 42, 516k params, best epoch 71 of 101, 7.5 min on RTX 2050): test MAE 0.316, RMSE 0.499, R² 0.894 (val R² ~0.93).
     Spearman PS RT 0.83 / Th 0.89, PET RT 0.73 / Th 0.89. Selectivity (69 HSP test solvents): top-10 0.50, top-20 0.40, margin ρ 0.92.
     Sanity: overfits 100 rows (train MSE 4e-6, R² 1.000). Logs: results/training_logs/ (polysolv_stage1.log/_history.csv/_curves.png)
-  - Leave-one-polymer-out (T24, PARTIAL — 4 of 8 done, seed 42; table results/lopo.md). Held-out polymer, all its Zhou rows:
+  - Leave-one-polymer-out (T24, all 8 done, seed 42; table results/lopo.md, figure results/figures/fig_lopo.png). Held-out polymer, all its Zhou rows:
     PS  R² 0.01, MAE 1.05, ρ RT 0.64 / Th 0.78 (Hansen prior ρ 0.66 / 0.41; in-dist. R² 0.86)
     PET R² 0.12, MAE 0.95, ρ RT 0.34 / Th 0.59 (prior 0.58 / 0.47; in-dist. 0.83)
     PE  R² 0.40, MAE 0.93, ρ RT 0.89 / Th 0.85 (prior 0.62 / 0.01; in-dist. 0.93)
     PP  R² −0.29, MAE 1.23, ρ RT 0.69 / Th 0.72 (prior 0.60 / 0.29; in-dist. 0.85)
-    -> ranking of solvents partly transfers (ρ 0.3–0.9, better than the prior at Th), absolute level does not (R² ≈ 0): no polymer generalization claim.
-    MISSING: Polysolv LOPO for PVC, EVOH, PA6, PA66; plain-GIN LOPO for PS and PET (physics-vs-no-physics comparison).
-    Resume: python -m scripts.run_lopo --polymers PVC EVOH PA6 PA66   then   python -m scripts.run_lopo --no-physics --polymers PS PET
+    PVC R² 0.40, MAE 0.62, ρ RT 0.51 / Th 0.66 (prior 0.68 / 0.40; in-dist. 0.88)
+    EVOH R² 0.16, MAE 1.16, ρ RT 0.49 / Th 0.71 (prior 0.48 / 0.32; in-dist. 0.93)
+    PA6 R² 0.43, MAE 0.81, ρ RT 0.40 / Th 0.65 (prior 0.50 / 0.26; in-dist. 0.80)
+    PA66 R² 0.74, MAE 0.45, ρ RT 0.67 / Th 0.86 (prior 0.53 / 0.44; in-dist. 0.82)
+    Plain GIN (no physics) LOPO: PS R² −1.01, MAE 1.59, ρ 0.65 / 0.74; PET R² −0.94, MAE 1.66, ρ 0.62 / 0.68.
+    -> ranking of solvents partly transfers (ρ 0.3–0.9, better than the prior at Th in all 8), absolute level only weakly (R² −0.29 … 0.74): no polymer generalization claim.
+    -> physics layer earns its place here: on held-out PS/PET it keeps R² ≈ 0–0.1 where the plain GIN collapses to ≈ −1 (MAE ~1.0 vs ~1.6); plain GIN ranks PET better (ρ RT 0.62 vs 0.34).
+  - Figures (T30 plotting / T32): python -m scripts.make_figures -> results/figures/ (model comparison, ablations, parity, LOPO, screening, calibration);
+    notebooks/02_results.ipynb shows all tables + figures. Ablation runs saved as results/ablation_<name>.json are added to fig_ablations automatically.
   - Stage 2 (T25, w_rank 0.2, RankNet on PS−PET margins of 649 train solvents at Th, 64 per step; 16 min):
     test R² 0.886 (stage 1 0.894); selectivity top-10 0.50 / top-20 0.40 (unchanged), margin ρ 0.93 (0.92); external AUC 0.93 (same),
     Table 3 MAE 1.12 (1.17), ρ 0.84 (0.80). -> changes are within single-seed noise; ensemble members use stage 1 (ensemble.w_rank = 0).
@@ -236,7 +242,7 @@ Decisions changed since plan:
   - Dissolution time uses the drive (chi* − chi), chi* = the head's chi at 10 wt%, because the learned chi is an effective chi (threshold ≈ 0.1, not 0.5).
 Open issues:
 1. polymer_props.csv: all rows `verified = no`. Thermal values are typical handbook values (check against Polymer Handbook). HSP for PE/PET/PP/PVC/PA6/PA66 = Hansen handbook averages (accudynetest polytable_02). PS from Materials 2018, 11, 1529 (no R0). EVOH HSP is an estimate (PE/PVOH volume-fraction mix).
-2. Polysolv (R² 0.894) ties XGBoost (0.888) but loses to the plain GIN (0.923) on Zhou-test regression; it wins on external AUC (0.93) and selectivity margin ρ (0.92). The physics layer has to earn its place in leave-one-polymer-out (T24) and temperature behaviour (T31); report this trade-off honestly.
+2. Polysolv (R² 0.894) ties XGBoost (0.888) but loses to the plain GIN (0.923) on Zhou-test regression; it wins on external AUC (0.93) and selectivity margin ρ (0.92). In leave-one-polymer-out (T24) the physics layer clearly beats the plain GIN on absolute level (PS/PET R² ≈ 0.1 vs ≈ −1); temperature behaviour still to check in T31. Report this trade-off honestly.
 3. The Hansen prior's absolute χ is too high for good PS solvents (toluene 0.65, limonene 0.68; THF 0.48). Its ranking is reasonable at RT (ρ 0.66) but weaker at Th (ρ 0.41) — the learned ΔA/ΔB must fix this; check in T31.
 4. McGowan-based V_s overestimates very large molecules (triolein ~ +14 %); fine for a prior.
 5. RT taken as 298.15 K (assumption, state in report).
